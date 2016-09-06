@@ -1,0 +1,46 @@
+{
+  "name": "joel-thiessens-website",
+  "version": "0.0.1",
+  "description": "Joel Thiessen's Website",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js -p 3000",
+    "start:prod": "NODE_ENV=production nodemon app.js -p 3000",
+    "build": "NODE_ENV=production webpack -p --progress --colors",
+    "watch": "webpack-dev-server --inline --hot --progress --colors"
+  },
+  "author": "Joel Thiessen",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-eslint": "^6.1.2",
+    "babel-preset-react-hmre": "^1.1.1",
+    "copy-webpack-plugin": "^3.0.1",
+    "esformatter-curly": "0.0.2",
+    "esformatter-jsx": "^7.0.1",
+    "eslint-plugin-react": "^6.2.0",
+    "jsx-loader": "^0.13.2",
+    "nodemon": "^1.9.2",
+    "react": "^15.2.1",
+    "react-hot-loader": "^1.3.0",
+    "react-jsx": "^1.0.0",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "babel-core": "^6.14.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-preset-react": "^6.11.1",
+    "babel-preset-stage-0": "^6.5.0",
+    "compression": "^1.6.2",
+    "express": "^4.14.0",
+    "file-loader": "^0.9.0",
+    "react": "^15.3.1",
+    "react-bootstrap": "^0.29.5",
+    "react-dom": "^15.3.1",
+    "react-router": "^2.7.0",
+    "react-router-bootstrap": "^0.23.1",
+    "swig": "^1.4.2",
+    "url-loader": "^0.5.7"
+  }
+}
