@@ -1,19 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Input, Button, Image, Jumbotron, Grid, Row, Col, Panel, LinkWithTooltip } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Input, Button, Image, Jumbotron, Grid, Row, Col, Panel, LinkWithTooltip, Well } from 'react-bootstrap';
 import { Router, Route, Link, IndexRedirect, hashHistory } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 import dinoImg from '../img/Dino.png';
+import { ReactPDF } from './pdfViewer';
 
 var App = React.createClass({
   render() {
     return (
-        <div>
-                <div>
-                    <TopBar />
-                </div>
-                {this.props.children}
-            </div>
+      <div>
+          <div>
+              <TopBar />
+          </div>
+          {this.props.children}
+      </div>
       );
   }
 })
@@ -53,7 +54,6 @@ var TopBar = React.createClass({
       );
   }
 })
-
 var MainGrid = React.createClass({
   render() {
     return (
@@ -70,13 +70,12 @@ var MainGrid = React.createClass({
       );
   }
 })
-
 var Jumbo = React.createClass({
   render() {
     return (
       <Jumbotron>
           <h1>Welcome!</h1>
-          <p>I, Joel Thiessen, am a software developer based in Winnipeg, Manitoba—and I enjoy creating things! You can check out one of my projects, a self-navigating-robot simulation, right here.
+          <p>I, Joel Thiessen, am a software developer based near Winnipeg, Manitoba—and I enjoy creating things! You can check out one of my projects, a self-navigating-robot simulation, right here.
           </p>
           <p>
               <LinkContainer to={"/robots"}>
@@ -87,7 +86,6 @@ var Jumbo = React.createClass({
       );
   }
 })
-
 var Main = React.createClass({
   render() {
     return (
@@ -103,20 +101,47 @@ var Main = React.createClass({
               <Link id="friendsLink" to="/friends">here.</Link>
           </p>
           <p>
-            <span>If you want to see the source-code for this </span>
-            <a id="webGitHubLink" href="https://github.com/jatjat" >website</a>
-            <span>, or my FastSLAM </span>
-            <a id="fastSLAMGitHubLink" href="https://github.com/jatjat/kaly2" >demo</a>
-            <span>, my GitHub is </span>
-            <a id="parentGitHubLink" href="https://github.com/jatjat" >here.</a></p>
+              <span>If you want to see the source-code for this </span>
+              <a id="webGitHubLink" href="https://github.com/jatjat/joelathiessen.ca">website</a>
+              <span>, or my FastSLAM </span>
+              <a id="fastSLAMGitHubLink" href="https://github.com/jatjat/kaly2">demo</a>
+              <span>, my GitHub is </span>
+              <a id="parentGitHubLink" href="https://github.com/jatjat">here.</a></p>
       </Panel>
     )
   }
 })
-
 var Employers = React.createClass({
   render() {
-    return (<div>Employers!</div>);
+    return (
+      <Grid>
+          <Row>
+              <Col sm={9} md={9}>
+              <Panel>
+                  <Col sm={11} md={11}> Hey employers! Here's a little background about me:
+                  <br />
+                  <br /> I'm a Computer Science Co-op student currently completing my last semester at the University of Manitoba. I'll be graduating in January.
+                  <br />
+                  <br /> In the course of my three work terms, highlights for me included creating a tool to facilitate bioinformatic research, writing functionality improving the production of 3D and video visual effects, and instrumenting a multi-platform video-collaberation application for automation.
+                  <br />
+                  <br /> I've had a chance to work with many different technologies, from web-centric tech like Spring and Angular, to high performance modern C++, to cross platform C# for iOS and Android; and have worked in Linux and OS X extensively, often with Python, pretty much always using Vim.
+                  <br />
+                  <br /> This website was made in ES6 with React and Node.js, and my FastSLAM implementation is written in Kotlin—I like learning new things!
+                  <br />
+                  <br /> A viewable copy of my resume is included below.
+                  <br />
+                  </Col>
+              </Panel>
+              <span></span>
+              <Well>
+                  <ReactPDF src="/public/res.pdf" />
+              </Well>
+              </Col>
+              <Col sm={9} md={9}>
+              </Col>
+          </Row>
+      </Grid>
+      );
   }
 })
 var Robots = React.createClass({
@@ -126,15 +151,33 @@ var Robots = React.createClass({
 })
 var Friends = React.createClass({
   render() {
-    return (<div>Friends!</div>);
+    return (
+      <Grid>
+          <Row>
+              <Col xs={9} md={9}>
+              <Image src="/img/reepicheepLarge.png" responsive />
+              </Col>
+          </Row>
+      </Grid>
+      );
   }
 })
 var About = React.createClass({
   render() {
-    return (<div>About!</div>);
+    return (
+      <Grid>
+          <Row>
+              <Col xs={9} md={9}>
+              <Panel>
+                  About this website: it's mostly for projects I think are cool, and necessary marketing.
+                  <br /> About me: I enjoy reading and thinking.
+              </Panel>
+              </Col>
+          </Row>
+      </Grid>
+      );
   }
 })
-
 var Root = React.createClass({
   render() {
     return (

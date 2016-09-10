@@ -22,7 +22,7 @@ module.exports = {
         ])
     },
     output: {
-        publicPath: '/static',
+        publicPath: '/',
         filename: 'public/[name].js',
         sourceMapFileName: "[name].js.map"
     },

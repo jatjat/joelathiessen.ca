@@ -14,9 +14,9 @@ app.use(compression({filter: shouldCompress}))
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 
-app.use('/static/img', express.static(path.join(__dirname, 'img')));
-app.use('/static/css', express.static(path.join(__dirname, 'css')));
-app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use('/img', express.static(path.join(__dirname, 'img')));
+app.use('/css', express.static(path.join(__dirname, 'css')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
   res.render('index.html', {
