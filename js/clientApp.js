@@ -122,9 +122,9 @@ var Employers = React.createClass({
                   <br />
                   <br /> I'm a Computer Science Co-op student currently completing my last semester at the University of Manitoba. I'll be graduating in January.
                   <br />
-                  <br /> In the course of my three work terms, highlights for me included creating a tool to facilitate bioinformatic research, writing functionality improving the production of 3D and video visual effects, and instrumenting a multi-platform video-collaberation application for automation.
+                  <br /> In the course of my three work terms, highlights for me included creating a tool to facilitate the secure transfer of genomic data, implementing functionality improving the production of 3D and video visual effects, and instrumenting a multi-platform video-collaberation application for automation.
                   <br />
-                  <br /> I've had a chance to work with many different technologies, from web-centric tech like Spring and Angular, to high performance modern C++, to cross platform C# for iOS and Android; and have worked in Linux and OS X extensively, often with Python, pretty much always using Vim.
+                  <br /> I've had a chance to work with many different technologies, from web-centric tech like Spring and Angular, to high performance modern C++, to cross platform C# for iOS and Android; and have worked in Linux and OS X extensively, often with Python, usually with Vim.
                   <br />
                   <br /> This website was made in ES6 with React and Node.js, and my FastSLAM implementation is written in Kotlin—I like learning new things!
                   <br />
@@ -169,7 +169,7 @@ var About = React.createClass({
           <Row>
               <Col xs={12} md={9}>
               <Panel>
-                  About this website: it's mostly for projects I think are cool, and necessary marketing.
+                  About this website: it's mostly for projects I think are cool, and for necessary marketing.
                   <br /> About me: I enjoy reading and thinking.
               </Panel>
               </Col>
