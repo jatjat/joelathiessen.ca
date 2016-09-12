@@ -59,10 +59,10 @@ var MainGrid = React.createClass({
     return (
       <Grid>
           <Row>
-              <Col xs={9} md={9}>
+              <Col xs={12} md={9}>
               <Jumbo />
               </Col>
-              <Col xs={9} md={9}>
+              <Col xs={12} md={9}>
               <Main />
               </Col>
           </Row>
@@ -116,9 +116,9 @@ var Employers = React.createClass({
     return (
       <Grid>
           <Row>
-              <Col sm={9} md={9}>
+              <Col xs={12} md={9}>
               <Panel>
-                  <Col sm={11} md={11}> Hey employers! Here's a little background about me:
+                  <Col xs={12} md={9}> Hey employers! Here's a little background about me:
                   <br />
                   <br /> I'm a Computer Science Co-op student currently completing my last semester at the University of Manitoba. I'll be graduating in January.
                   <br />
@@ -137,7 +137,7 @@ var Employers = React.createClass({
                   <ReactPDF src="/public/res.pdf" />
               </Well>
               </Col>
-              <Col sm={9} md={9}>
+              <Col xs={12} md={9}>
               </Col>
           </Row>
       </Grid>
@@ -154,7 +154,7 @@ var Friends = React.createClass({
     return (
       <Grid>
           <Row>
-              <Col xs={9} md={9}>
+              <Col xs={12} md={9}>
               <Image src="/img/reepicheepLarge.png" responsive />
               </Col>
           </Row>
@@ -167,7 +167,7 @@ var About = React.createClass({
     return (
       <Grid>
           <Row>
-              <Col xs={9} md={9}>
+              <Col xs={12} md={9}>
               <Panel>
                   About this website: it's mostly for projects I think are cool, and necessary marketing.
                   <br /> About me: I enjoy reading and thinking.
