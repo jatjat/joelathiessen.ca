@@ -5,6 +5,7 @@ import { Router, Route, Link, IndexRedirect, hashHistory } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 import dinoImg from '../img/Dino.png';
 import { ReactPDF } from './pdfViewer';
+import { RobotsApp } from './robotsAppClient';
 
 var App = React.createClass({
   render() {
@@ -146,7 +147,7 @@ var Employers = React.createClass({
 })
 var Robots = React.createClass({
   render() {
-    return (<div>Robots!</div>);
+    return (<RobotsApp namespace="/" />);
   }
 })
 var Friends = React.createClass({

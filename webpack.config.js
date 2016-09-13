@@ -18,7 +18,7 @@ function getEntrySources(sources) {
 module.exports = {
     entry: {
         clientApp: getEntrySources([
-            './js/clientApp.js'
+            './js/appClient.js'
         ])
     },
     output: {
