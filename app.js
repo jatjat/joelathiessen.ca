@@ -13,6 +13,8 @@ var session = expressSession({
   resave: true
 });
 var socketIoSession = require('socket.io-express-session');
+var WebSocket = require('ws');
+var IO = require('socket.io')
 
 var cdn = (process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:8080/');
 swig.setDefaults({
@@ -44,12 +46,24 @@ var server = app.listen(process.env.PORT || 3000, () => {
   console.log('Express server listening on port ' + server.address().port);
 });
 
-var io = require('socket.io')(server);
+var io = IO(server);
 io.use(socketIoSession(session));
 io.on('connection', (socket) => {
+  var ses = socket.handshake.session;
+
+  // for now, always get an unspecified robot:
+  ses.kalyClient = new WebSocket('ws://localhost:9000/api/ws/robot');
+  
+
+  ses.kalyClient.on('message', (data, flags) => {
+    socket.emit(data);
+  });
+
+
 
   console.log('client connected');
   socket.on('disconnect', () => {
+    ses.kalyClient.close();
     console.log('client disconnected');
   });
 });
