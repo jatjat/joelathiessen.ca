@@ -56,7 +56,7 @@ io.on('connection', (socket) => {
   
 
   ses.kalyClient.on('message', (data, flags) => {
-    socket.emit(data);
+    socket.emit('message', data);
   });
 
 

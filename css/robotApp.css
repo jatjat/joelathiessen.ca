@@ -3,6 +3,6 @@
     /* height: 100% never produces a working map.
      * From what I could see online, and by
      * experimentation, it seems to be a 
-     * react-leaflet specific limitation.
+     * react-bootstrap leaflet specific limitation.
      */
 }
