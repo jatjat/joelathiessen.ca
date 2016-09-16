@@ -1,8 +1,20 @@
+/*
+ * TODO: Maybe checking if the control panel should
+ * be beside or below the map could be done
+ * in a better way?
+ */
+
 .leaflet-container {
-    height: 80vh;
-    /* height: 100% never produces a working map.
-     * From what I could see online, and by
-     * experimentation, it seems to be a 
-     * react-bootstrap leaflet specific limitation.
-     */
+    height: 50vh;
+}
+
+@media(min-width:34em){
+    .leaflet-container {
+        height: 80vh;
+        /* height: 100% never produces a working map.
+         * From what I could see online, and by
+         * experimentation, it seems to be a 
+         * react-bootstrap leaflet specific limitation.
+         */
+    }
 }

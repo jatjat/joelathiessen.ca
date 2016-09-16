@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Panel } from 'react-bootstrap';
+import { ControlLabel, Grid, FormGroup, FormControl, HelpBlock, Row, Col, Panel } from 'react-bootstrap';
+import Validator from 'validator';
 import IO from 'socket.io-client';
 import Leaflet from 'leaflet';
 
@@ -9,11 +10,13 @@ export class RobotsApp extends React.Component {
     super(props)
     this.state = {
       connected: "disconnected",
+      numParticles: ""
     }
     this.io = IO(this.props.namespace, {
       reconnect: true,
       'connect timeout': 5000
     });
+    this.handleNumParticlesChange = this.handleNumParticlesChange.bind(this)
   }
   componentDidMount() {
 
@@ -44,14 +47,59 @@ export class RobotsApp extends React.Component {
     this.io.disconnect();
   }
 
+  validateForm() {}
+  onSubmit() {}
+  getNumParticlesValidationState() {
+    if (Validator.isInt(this.state.numParticles, {
+        min: 1,
+        max: 75
+      })) {
+      return "success";
+    } else if (Validator.isInt(this.state.numParticles, {
+        min: 75,
+        max: 100
+      })) {
+      return "warning";
+    } else if (this.state.numParticles != "") {
+      return "error";
+    }
+  }
+
+  handleNumParticlesChange(e) {
+    this.setState({
+      numParticles: e.target.value
+    });
+  }
+
   render() {
+    var helpBlock = null;
+
+    if (this.getNumParticlesValidationState() == 'error') {
+      helpBlock = (<HelpBlock>Between 1 and 100 particles are required</HelpBlock>
+      )
+    }
     return (
-      <div>RobotsApp!
-          {this.state.connected}
-          <Panel className="mapPanel">
-              <RMap io={this.io} connected={this.state.connected} />
-          </Panel>
-      </div>
+      <Grid>
+          <Row>
+              <Col xs={12} md={8} mdPush={4}>
+              <Panel className="mapPanel">
+                  <RMap io={this.io} connected={this.state.connected} />
+              </Panel>
+              </Col>
+              <Col xs={12} md={4} mdPull={8}>
+              <Panel>
+                  <form>
+                      <FormGroup controlId="numParticlesForm" validationState={this.getNumParticlesValidationState()}>
+                          <ControlLabel>Number of Particles</ControlLabel>
+                          <FormControl type="text" value={this.state.numParticles} placeholder="Number of particles (1-100)" onChange={this.handleNumParticlesChange} />
+                          <FormControl.Feedback />
+                          {helpBlock}
+                      </FormGroup>
+                  </form>
+              </Panel>
+              </Col>
+          </Row>
+      </Grid>
       );
   }
 }
@@ -81,7 +129,7 @@ class RMap extends React.Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    if (nextProps.connected == 'connected') {
+    if (this.props.connected != 'connected' && nextProps.connected == 'connected') {
       this.props.io.on('message', (data, flags) => {
         var jsonData = JSON.parse(data);
         this.history += jsonData
