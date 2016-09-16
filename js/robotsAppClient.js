@@ -49,8 +49,7 @@ export class RobotsApp extends React.Component {
       <div>RobotsApp!
           {this.state.connected}
           <Panel className="mapPanel">
-              <RMap io={this.io}>
-              </RMap>
+              <RMap io={this.io} connected={this.state.connected} />
           </Panel>
       </div>
       );
@@ -79,21 +78,26 @@ class RMap extends React.Component {
 
     this.odoPathLayerGroup = Leaflet.geoJSON(null, {}).addTo(this.map);
 
-    this.props.io.on('message', (data, flags) => {
-      var jsonData = JSON.parse(data);
-      this.history += jsonData
+  }
 
-      var y = jsonData.odoPose.y;
-      var x = jsonData.odoPose.x;
-      if (this.oY && this.oX) {
-        this.odoPathLayerGroup.addData({
-          type: "LineString",
-          coordinates: [[this.oY, this.oX], [y, x]]
-        });
-      }
-      this.oY = y;
-      this.oX = x;
-    });
+  componentWillUpdate(nextProps, nextState) {
+    if (nextProps.connected == 'connected') {
+      this.props.io.on('message', (data, flags) => {
+        var jsonData = JSON.parse(data);
+        this.history += jsonData
+
+        var y = jsonData.odoPose.y;
+        var x = jsonData.odoPose.x;
+        if (this.oY && this.oX) {
+          this.odoPathLayerGroup.addData({
+            type: "LineString",
+            coordinates: [[this.oY, this.oX], [y, x]]
+          });
+        }
+        this.oY = y;
+        this.oX = x;
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -105,5 +109,6 @@ class RMap extends React.Component {
   }
 }
 RMap.propTypes = {
-  io: React.PropTypes.object.isRequired
+  io: React.PropTypes.object.isRequired,
+  connected: React.PropTypes.string.isRequired
 }
