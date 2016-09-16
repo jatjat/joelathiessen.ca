@@ -76,7 +76,7 @@ var Jumbo = React.createClass({
     return (
       <Jumbotron>
           <h1>Welcome!</h1>
-          <p>I, Joel Thiessen, am a software developer based near Winnipeg, Manitoba—and I enjoy creating things! You can check out one of my projects, a self-navigating-robot simulation, right here.
+          <p>I, Joel Thiessen, am a software developer based near Winnipeg, Manitoba—and I enjoy creating things! You can check out one of my projects, a self-locating-robot simulation, right here.
           </p>
           <p>
               <LinkContainer to={"/robots"}>
@@ -127,7 +127,7 @@ var Employers = React.createClass({
                   <br />
                   <br /> I've had a chance to work with many different technologies, from web-centric tech like Spring and Angular, to high performance modern C++, to cross platform C# for iOS and Android; and have worked in Linux and OS X extensively, often with Python, usually with Vim.
                   <br />
-                  <br /> This website was made in ES6 with React and Node.js, and my FastSLAM implementation is written in Kotlin—I like learning new things!
+                  <br /> This website was my introduction to ES6, React, and Node.js, and my FastSLAM implementation is written in Kotlin—I like learning new things!
                   <br />
                   <br /> A viewable copy of my resume is included below.
                   <br />
