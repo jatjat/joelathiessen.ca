@@ -9,7 +9,7 @@ export class RobotsApp extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      connected: "disconnected",
+      connected: "uninitialized",
       numParticles: ""
     }
     this.io = IO(this.props.namespace, {
@@ -49,20 +49,37 @@ export class RobotsApp extends React.Component {
 
   validateForm() {}
   onSubmit() {}
-  getNumParticlesValidationState() {
+
+  getNumParticlesValidationState(includeMsg) {
+
+    var validity;
+    var msg;
     if (Validator.isInt(this.state.numParticles, {
         min: 1,
-        max: 75
+        max: 50
       })) {
-      return "success";
+      validity = "success";
     } else if (Validator.isInt(this.state.numParticles, {
-        min: 75,
+        min: 51,
         max: 100
       })) {
-      return "warning";
+      validity = "warning";
+      msg = "A large number of particles may result in diminished localisation returns";
+    } else if (Validator.isInt(this.state.numParticles)) {
+      validity = "error";
+      msg = "An integer between 1 and 100 is required";
     } else if (this.state.numParticles != "") {
-      return "error";
+      validity = "error";
+      msg = "A valid integer is required";
+    } else {
+      validity = null;
     }
+
+      if(includeMsg == true) {
+        return { validity: validity, msg : msg };
+      } else {
+        return validity;
+      }
   }
 
   handleNumParticlesChange(e) {
@@ -73,9 +90,10 @@ export class RobotsApp extends React.Component {
 
   render() {
     var helpBlock = null;
+    var numPartValidity = this.getNumParticlesValidationState(true);
 
-    if (this.getNumParticlesValidationState() == 'error') {
-      helpBlock = (<HelpBlock>Between 1 and 100 particles are required</HelpBlock>
+    if (numPartValidity.validity != 'success') {
+      helpBlock = (<HelpBlock>{numPartValidity.msg}</HelpBlock>
       )
     }
     return (
@@ -129,7 +147,7 @@ class RMap extends React.Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    if (this.props.connected != 'connected' && nextProps.connected == 'connected') {
+    if (this.props.connected == 'uninitialized' && nextProps.connected == 'connected') {
       this.props.io.on('message', (data, flags) => {
         var jsonData = JSON.parse(data);
         this.history += jsonData
