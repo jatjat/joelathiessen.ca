@@ -13,23 +13,46 @@ export class RobotsApp extends React.Component {
       numParticles: "",
       sensorDistStdev: "",
       sensorAngStdev: "",
-      showHelpModal: false
+      showHelpModal: false,
+      isRunning: true // to prevent StartButton from flashing on page load
     }
+    this.rMap = null;
     this.io = IO(this.props.namespace, {
       reconnect: true,
     });
+
+    this.io.on('message', (data, flags) => {
+      var jsonData = JSON.parse(data);
+      this.history += jsonData
+
+      if (this.state.isRunning == false) {
+        this.setState({
+          isRunning: true
+        });
+      }
+      if (this.rMap != null) {
+        this.rMap.handleMapData(jsonData);
+      }
+    });
+
     this.handleNumParticlesChange = this.handleNumParticlesChange.bind(this);
     this.handleSensorDistStdevChange = this.handleSensorDistStdevChange.bind(this);
     this.handleSensorAngStdevChange = this.handleSensorAngStdevChange.bind(this);
     this.openHelpModal = this.openHelpModal.bind(this);
     this.closeHelpModal = this.closeHelpModal.bind(this);
+    this.handleStartButtonClick = this.handleStartButtonClick.bind(this);
+    this.handleMadeRMap = this.handleMadeRMap.bind(this);
+  }
+
+  handleMadeRMap(rMap) {
+    this.rMap = rMap;
   }
 
   componentDidMount() {
 
     this.io.on('connect', () => {
       this.setState({
-        connected: "connected"
+        connected: "connected",
       });
       console.log("connected");
     });
@@ -169,6 +192,12 @@ export class RobotsApp extends React.Component {
     });
   }
 
+  handleStartButtonClick(e) {
+    this.setState({
+      isRunning: !this.state.isRunning
+    });
+  }
+
   render() {
     var numParticlesHelpBlock = null;
     var numPartValidity = this.getNumParticlesValidationState(true);
@@ -224,7 +253,7 @@ export class RobotsApp extends React.Component {
               <Row>
                   <Col xs={12} md={8} mdPush={4}>
                   <Panel className="mapPanel">
-                      <RMap io={this.io} connected={this.state.connected} />
+                      <RMap onRMapInitialized={this.handleMadeRMap} />
                   </Panel>
                   </Col>
                   <Col xs={12} md={4} mdPull={8}>
@@ -270,9 +299,7 @@ export class RobotsApp extends React.Component {
                               </Button>
                           </ButtonGroup>
                           <ButtonGroup>
-                              <Button bsStyle="success">
-                                  <Glyphicon glyph="play" /> Start
-                              </Button>
+                              <StartButton running={this.state.isRunning} onClick={this.handleStartButtonClick} />
                           </ButtonGroup>
                       </ButtonToolbar>
                   </Panel>
@@ -287,6 +314,35 @@ RobotsApp.propTypes = {
   namespace: React.PropTypes.string.isRequired
 }
 
+class StartButton extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    var button;
+    if (this.props.running) {
+      button = (
+        <Button bsStyle="warning" onClick={this.props.onClick}>
+            <Glyphicon glyph="pause" /> Pause
+        </Button>
+      );
+    } else {
+      button = (
+        <Button bsStyle="success" onClick={this.props.onClick}>
+            <Glyphicon glyph="play" /> Start
+        </Button>
+      );
+    }
+    return button;
+  }
+}
+StartButton.propTypes = {
+  running: React.PropTypes.bool.isRequired,
+  onClick: React.PropTypes.func.isRequired
+}
+
+
 class RMap extends React.Component {
 
   constructor(props) {
@@ -299,37 +355,32 @@ class RMap extends React.Component {
     this.map = Leaflet.map(ReactDOM.findDOMNode(this), {
       crs: Leaflet.CRS.Simple,
       preferCanvas: true,
-      minZoom: -5
+      minZoom: -4
     });
 
     this.map.fitBounds(startBounds);
 
     this.odoPathLayerGroup = Leaflet.geoJSON(null, {}).addTo(this.map);
-
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    if (this.props.connected == 'uninitialized' && nextProps.connected == 'connected') {
-      this.props.io.on('message', (data, flags) => {
-        var jsonData = JSON.parse(data);
-        this.history += jsonData
-
-        var y = jsonData.odoPose.y;
-        var x = jsonData.odoPose.x;
-        if (this.oY && this.oX) {
-          this.odoPathLayerGroup.addData({
-            type: "LineString",
-            coordinates: [[this.oY, this.oX], [y, x]]
-          });
-        }
-        this.oY = y;
-        this.oX = x;
-      });
-    }
+    this.props.onRMapInitialized(this);
   }
 
   componentWillUnmount() {
     this.map = null;
+  }
+
+  // it is prohibitively slow to handle new map data by passing it as props to be
+  // applied to the map in the render method
+  handleMapData(jsonData) {
+    var y = jsonData.odoPose.y;
+    var x = jsonData.odoPose.x;
+    if (this.oY && this.oX) {
+      this.odoPathLayerGroup.addData({
+        type: "LineString",
+        coordinates: [[this.oY, this.oX], [y, x]]
+      });
+    }
+    this.oY = y;
+    this.oX = x;
   }
 
   render() {
@@ -337,6 +388,5 @@ class RMap extends React.Component {
   }
 }
 RMap.propTypes = {
-  io: React.PropTypes.object.isRequired,
-  connected: React.PropTypes.string.isRequired
+  onRMapInitialized: React.PropTypes.func.isRequired
 }
