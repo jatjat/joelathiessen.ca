@@ -121,7 +121,7 @@ var Employers = React.createClass({
               <Panel>
                   <Col xs={12} md={9}> Hey employers! Here's a little background about me:
                   <br />
-                  <br /> I'm a Computer Science Co-op student currently completing my last semester at the University of Manitoba. I'll be graduating in January.
+                  <br /> I'm a Computer Science Co-op student currently completing my last semester at the University of Manitoba. I'll be graduating in January 2017.
                   <br />
                   <br /> In the course of my three work terms, highlights for me included creating a tool to facilitate the secure transfer of genomic data, implementing functionality improving the production of 3D and video visual effects, and instrumenting a multi-platform video-collaberation application for automation.
                   <br />
