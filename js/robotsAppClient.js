@@ -22,6 +22,7 @@ export class RobotsApp extends React.Component {
     this.handleSensorDistStdevChange = this.handleSensorDistStdevChange.bind(this);
     this.handleSensorAngStdevChange = this.handleSensorAngStdevChange.bind(this);
   }
+
   componentDidMount() {
 
     this.io.on('connect', () => {
@@ -50,9 +51,6 @@ export class RobotsApp extends React.Component {
   componentWillUnmount() {
     this.io.disconnect();
   }
-
-  validateForm() {}
-  onSubmit() {}
 
   getNumParticlesValidationState(includeMsg) {
 
@@ -211,7 +209,33 @@ export class RobotsApp extends React.Component {
                           <FormControl.Feedback />
                           {sensorAngStdevHelpBlock}
                       </FormGroup>
+                      <ButtonToolbar justified>
+                          <ButtonGroup>
+                              <Button type="submit" bsStyle="info">
+                                  <Glyphicon glyph="question-sign" /> What do these settings do?
+                              </Button>
+                          </ButtonGroup>
+                          <ButtonGroup>
+                              <Button type="submit" bsStyle="primary">
+                                  <Glyphicon glyph="ok" /> Apply
+                              </Button>
+                          </ButtonGroup>
+                      </ButtonToolbar>
                   </form>
+              </Panel>
+              <Panel header="Simulation Settings">
+                  <ButtonToolbar>
+                      <ButtonGroup>
+                          <Button bsStyle="danger">
+                              <Glyphicon glyph="remove-circle" /> Reset Simulation
+                          </Button>
+                      </ButtonGroup>
+                      <ButtonGroup>
+                          <Button bsStyle="success">
+                              <Glyphicon glyph="play" /> Start
+                          </Button>
+                      </ButtonGroup>
+                  </ButtonToolbar>
               </Panel>
               </Col>
           </Row>
