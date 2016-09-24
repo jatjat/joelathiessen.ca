@@ -62,6 +62,7 @@ export class RobotsApp extends React.Component {
       this.setState({
         connected: "connected",
       });
+      this.rMap.initialize();
       console.log("connected");
     });
 
@@ -317,7 +318,7 @@ export class RobotsApp extends React.Component {
               <Row>
                   <Col xs={12} md={8} mdPush={4}>
                   <Panel className="mapPanel">
-                      <RMap onRMapInitialized={this.handleMadeRMap} />
+                      <RMap onRMapMounted={this.handleMadeRMap} />
                   </Panel>
                   </Col>
                   <Col xs={12} md={4} mdPull={8}>
@@ -422,13 +423,23 @@ class RMap extends React.Component {
     });
 
     this.map.fitBounds(startBounds);
-
-    this.odoPathLayerGroup = Leaflet.geoJSON(null, {}).addTo(this.map);
-    this.props.onRMapInitialized(this);
+    this.props.onRMapMounted(this);
   }
 
   componentWillUnmount() {
     this.map = null;
+  }
+
+  // Leaflet 1 will stop displaying new data after going back to
+  // this app's html webpage from another html page unless its
+  // layers are reset
+  initialize() {
+    if (this.odoPathLayerGroup != null) {
+      this.map.removeLayer(this.odoPathLayerGroup);
+      this.oX = null;
+      this.oY = null;
+    }
+    this.odoPathLayerGroup = Leaflet.geoJSON(null, {}).addTo(this.map);
   }
 
   // it is prohibitively slow to handle new map data by passing it as props to be
@@ -451,5 +462,5 @@ class RMap extends React.Component {
   }
 }
 RMap.propTypes = {
-  onRMapInitialized: React.PropTypes.func.isRequired
+  onRMapMounted: React.PropTypes.func.isRequired
 }
