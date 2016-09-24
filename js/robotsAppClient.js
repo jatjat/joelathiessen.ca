@@ -6,6 +6,7 @@ import IO from 'socket.io-client';
 import Leaflet from 'leaflet';
 
 export class RobotsApp extends React.Component {
+
   constructor(props) {
     super(props)
     this.state = {
@@ -16,7 +17,12 @@ export class RobotsApp extends React.Component {
       showHelpModal: false,
       isRunning: true // to prevent StartButton from flashing on page load
     }
+    this.MAX_PARTICLES = 100;
+    this.DEFAULT_NUM_PARTICLES = 10;
+    this.DEFAULT_DIST_STDEV = 0.1;
+    this.DEFAULT_ANG_STDEV = 0.1;
     this.rMap = null;
+    this.history = [];
     this.io = IO(this.props.namespace, {
       reconnect: true,
     });
@@ -40,8 +46,10 @@ export class RobotsApp extends React.Component {
     this.handleSensorAngStdevChange = this.handleSensorAngStdevChange.bind(this);
     this.openHelpModal = this.openHelpModal.bind(this);
     this.closeHelpModal = this.closeHelpModal.bind(this);
-    this.handleStartButtonClick = this.handleStartButtonClick.bind(this);
     this.handleMadeRMap = this.handleMadeRMap.bind(this);
+    this.handleStartButtonClick = this.handleStartButtonClick.bind(this);
+    this.handleApplyButtonClick = this.handleApplyButtonClick.bind(this);
+    this.handleResetButtonClick = this.handleResetButtonClick.bind(this);
   }
 
   handleMadeRMap(rMap) {
@@ -95,18 +103,18 @@ export class RobotsApp extends React.Component {
     var msg = null;
     if (Validator.isInt(this.state.numParticles, {
         min: 1,
-        max: 50
+        max: this.MAX_PARTICLES / 2
       })) {
       validity = "success";
     } else if (Validator.isInt(this.state.numParticles, {
-        min: 51,
-        max: 100
+        min: 1 + this.MAX_PARTICLES / 2,
+        max: this.MAX_PARTICLES
       })) {
       validity = "warning";
       msg = "A large number of particles may result in diminished localization returns";
     } else if (Validator.isInt(this.state.numParticles)) {
       validity = "error";
-      msg = "An integer between 1 and 100 is required";
+      msg = "An integer between 1 and " + this.MAX_PARTICLES + " is required";
     } else if (this.state.numParticles != "") {
       validity = "error";
       msg = "A valid integer is required";
@@ -192,10 +200,66 @@ export class RobotsApp extends React.Component {
     });
   }
 
-  handleStartButtonClick(e) {
-    this.setState({
-      isRunning: !this.state.isRunning
-    });
+
+  handleApplyButtonClick() {
+    if (this.state.connected == "connected"
+      && this.getNumParticlesValidationState() != 'error'
+      && this.getSensorAngStdevValidationState() != 'error'
+      && this.getSensorDistStdevValidationState() != 'error') {
+
+
+      var nParticles = this.DEFAULT_NUM_PARTICLES;
+      if (this.state.numParticles != "") {
+        nParticles = parseFloat(this.state.numParticles)
+      }
+      var sDistStdev = this.DEFAULT_DIST_STDEV;
+      if (this.state.sensorDistStdev != "") {
+        sDistStdev = parseFloat(this.state.sensorDistStdev)
+      }
+      var sAngStdev = this.DEFAULT_ANG_STDEV;
+      if (this.state.sensorAngStdev != "") {
+        sAngStdev = parseFloat(this.state.sensorAngStdev)
+      }
+
+      var applyMsg = {
+        "msgType": "fastSlamSettings",
+        "msg": {
+          numParticles: nParticles,
+          sensorDistStdev: sDistStdev,
+          sensorAngStdev: sAngStdev
+        }
+      }
+
+      this.io.emit("message", applyMsg);
+    }
+  }
+
+  handleStartButtonClick() {
+    if (this.state.connected == "connected") {
+      var startMsg = {
+        "msgType": "robotSettings",
+        "msg": {
+          running: !this.state.isRunning,
+          resetting: false
+        }
+
+      }
+      this.io.emit("message", startMsg);
+    }
+  }
+
+  handleResetButtonClick() {
+
+    if (this.state.connected == "connected") {
+      var resetMsg = {
+        "msgType": "robotSettings",
+        "msg": {
+          running: this.state.isRunning,
+          resetting: true
+        }
+      }
+      this.io.emit("message", resetMsg);
+    }
   }
 
   render() {
@@ -242,7 +306,7 @@ export class RobotsApp extends React.Component {
                   </p>
                   <h5>Hypothetical sensor distance & angle standard deviations:</h5>
                   <p>
-                      FastSLAM guesses the accuracy of its sensors. The real accuracies of this robot's sensor are σ = 0.1 distance units and σ = 0.1 radians. Tuning these may produce better results.
+                      {"FastSLAM guesses the accuracy of its sensors. The real accuracies of this robot's sensor are σ = " + this.DEFAULT_DIST_STDEV + " distance units and σ = " + this.DEFAULT_ANG_STDEV + " radians. Tuning the guesses may produce better results."}
                   </p>
               </Modal.Body>
               <Modal.Footer>
@@ -261,19 +325,19 @@ export class RobotsApp extends React.Component {
                       <form>
                           <FormGroup controlId="numParticlesForm" validationState={this.getNumParticlesValidationState()}>
                               <ControlLabel>Number of Particles</ControlLabel>
-                              <FormControl type="text" value={this.state.numParticles} placeholder="Number of particles (1-100, default: 10)" onChange={this.handleNumParticlesChange} />
+                              <FormControl type="text" value={this.state.numParticles} placeholder={"Number of particles (1-" + this.MAX_PARTICLES + "), default: " + this.DEFAULT_NUM_PARTICLES + ")"} onChange={this.handleNumParticlesChange} />
                               <FormControl.Feedback />
                               {numParticlesHelpBlock}
                           </FormGroup>
                           <FormGroup controlId="sensorDistStdevForm" validationState={this.getSensorDistStdevValidationState()}>
                               <ControlLabel>Hypothetical sensor distance standard deviation</ControlLabel>
-                              <FormControl type="text" value={this.state.sensorDistStdev} placeholder="Hypothetical σ (default: 0.1 units)" onChange={this.handleSensorDistStdevChange} />
+                              <FormControl type="text" value={this.state.sensorDistStdev} placeholder={"Hypothetical σ (default: " + this.DEFAULT_DIST_STDEV + " units)"} onChange={this.handleSensorDistStdevChange} />
                               <FormControl.Feedback />
                               {sensorDistStdevHelpBlock}
                           </FormGroup>
                           <FormGroup controlId="sensorAngStdevForm" validationState={this.getSensorAngStdevValidationState()}>
                               <ControlLabel>Hypothetical sensor angle standard deviation</ControlLabel>
-                              <FormControl type="text" value={this.state.sensorAngStdev} placeholder="Hypothetical σ (default: 0.1 radians)" onChange={this.handleSensorAngStdevChange} />
+                              <FormControl type="text" value={this.state.sensorAngStdev} placeholder={"Hypothetical σ (default: " + this.DEFAULT_ANG_STDEV + " radians)"} onChange={this.handleSensorAngStdevChange} />
                               <FormControl.Feedback />
                               {sensorAngStdevHelpBlock}
                           </FormGroup>
@@ -284,7 +348,7 @@ export class RobotsApp extends React.Component {
                                   </Button>
                               </ButtonGroup>
                               <ButtonGroup>
-                                  <Button bsStyle="primary">
+                                  <Button bsStyle="primary" onClick={this.handleApplyButtonClick}>
                                       <Glyphicon glyph="ok" /> Apply
                                   </Button>
                               </ButtonGroup>
@@ -294,7 +358,7 @@ export class RobotsApp extends React.Component {
                   <Panel header="Simulation Settings">
                       <ButtonToolbar>
                           <ButtonGroup>
-                              <Button bsStyle="danger">
+                              <Button bsStyle="danger" onClick={this.handleResetButtonClick}>
                                   <Glyphicon glyph="remove-circle" /> Reset Simulation
                               </Button>
                           </ButtonGroup>
@@ -347,7 +411,6 @@ class RMap extends React.Component {
 
   constructor(props) {
     super(props);
-    this.history = [];
   }
   componentDidMount() {
     const startBounds = [[90, 150], [230, 470]];
@@ -355,7 +418,7 @@ class RMap extends React.Component {
     this.map = Leaflet.map(ReactDOM.findDOMNode(this), {
       crs: Leaflet.CRS.Simple,
       preferCanvas: true,
-      minZoom: -4
+      minZoom: -2
     });
 
     this.map.fitBounds(startBounds);

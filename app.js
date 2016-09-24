@@ -59,6 +59,33 @@ io.on('connection', (socket) => {
     socket.emit('message', data);
   });
 
+  socket.on('message', (data, flags) => {
+    var validData = null;
+
+    // Modify incoming data so that something valid is always sent
+    // TODO: Validate using JSON schemas instead? 
+    if (data.msgType == "fastSlamSettings") {
+      validData = {
+        "msgType": "fastSlamSettings",
+        "msg": {
+          numParticles: Math.max(1, Math.min(100, data.msg.numParticles)),
+          sensorDistStdev: Math.max(0, data.msg.sensorDistStdev),
+          sensorAngStdev: Math.max(0, data.msg.sensorAngStdev)
+        }
+      }
+    } else if (data.msgType == "robotSettings")
+      validData = {
+        "msgType": "robotSettings",
+        "msg": {
+          running: data.msg.running == true,
+          resetting: data.msg.resetting == true
+        }
+    }
+
+    if (validData != null) {
+      ses.kalyClient.send(JSON.stringify(validData));
+    }
+  });
 
 
   console.log('client connected');
