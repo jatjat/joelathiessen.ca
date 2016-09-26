@@ -23,10 +23,20 @@ export class RobotsApp extends React.Component {
     this.DEFAULT_ANG_STDEV = 0.1;
     this.rMap = null;
     this.history = [];
+
+    this.handleNumParticlesChange = this.handleNumParticlesChange.bind(this);
+    this.handleSensorDistStdevChange = this.handleSensorDistStdevChange.bind(this);
+    this.handleSensorAngStdevChange = this.handleSensorAngStdevChange.bind(this);
+    this.openHelpModal = this.openHelpModal.bind(this);
+    this.closeHelpModal = this.closeHelpModal.bind(this);
+    this.handleMadeRMap = this.handleMadeRMap.bind(this);
+    this.handleStartButtonClick = this.handleStartButtonClick.bind(this);
+    this.handleApplyButtonClick = this.handleApplyButtonClick.bind(this);
+    this.handleResetButtonClick = this.handleResetButtonClick.bind(this);
+
     this.io = IO(this.props.namespace, {
       reconnect: true,
     });
-
     this.io.on('message', (data, flags) => {
       var jsonData = JSON.parse(data);
       this.history += jsonData
@@ -41,28 +51,14 @@ export class RobotsApp extends React.Component {
       }
     });
 
-    this.handleNumParticlesChange = this.handleNumParticlesChange.bind(this);
-    this.handleSensorDistStdevChange = this.handleSensorDistStdevChange.bind(this);
-    this.handleSensorAngStdevChange = this.handleSensorAngStdevChange.bind(this);
-    this.openHelpModal = this.openHelpModal.bind(this);
-    this.closeHelpModal = this.closeHelpModal.bind(this);
-    this.handleMadeRMap = this.handleMadeRMap.bind(this);
-    this.handleStartButtonClick = this.handleStartButtonClick.bind(this);
-    this.handleApplyButtonClick = this.handleApplyButtonClick.bind(this);
-    this.handleResetButtonClick = this.handleResetButtonClick.bind(this);
-  }
-
-  handleMadeRMap(rMap) {
-    this.rMap = rMap;
-  }
-
-  componentDidMount() {
-
     this.io.on('connect', () => {
+
+      if (this.state.connected == "disconnected") {
+        this.rMap.initialize();
+      }
       this.setState({
         connected: "connected",
       });
-      this.rMap.initialize();
       console.log("connected");
     });
 
@@ -79,8 +75,13 @@ export class RobotsApp extends React.Component {
       });
       console.log(error);
     });
-
   }
+
+  handleMadeRMap(rMap) {
+    this.rMap = rMap;
+  }
+
+  componentDidMount() {}
 
   componentWillUnmount() {
     this.io.disconnect();
@@ -302,7 +303,7 @@ export class RobotsApp extends React.Component {
                   <p>
                       A robot implementing FastSLAM has particles each representing a possible robot "pose" (position and orientation). For a given step of the algorithm, the robot combines odometry and measurements to all the "features" that its sensors can see, as if from each of its particles. If a feature has been seen before in the position that a particle expects, (i.e. it corresponds to a "landmark"), the "weight" of the particle is adjusted based on how good the match is. Otherwise the feature is added as a new landmark. Finally, the particles are replaced with copies of the highest weighted particles. You can read more <a href="http://robots.stanford.edu/papers/montemerlo.fastslam-tr.pdf">here.</a>
                   </p>
-                  <h5>Number of Particles:</h5> FastSLAM is O(mlog(n)) where m is the number of particles, and n the number of landmarks. While more particles cause better accuracy, in aggregate they are expensive, and you may get excellent results even with 5-10 particles!
+                  <h5>Number of Particles:</h5> FastSLAM is O(mlog(n)) where m is the number of particles, and n the number of landmarks. While more particles cause better accuracy, in aggregate they are expensive, and you may get excellent results even with 5-10 particles! There is experimental support for viewing up to 10.
                   <p>
                   </p>
                   <h5>Hypothetical sensor distance & angle standard deviations:</h5>
@@ -415,14 +416,13 @@ class RMap extends React.Component {
   }
   componentDidMount() {
     const startBounds = [[90, 150], [230, 470]];
-
     this.map = Leaflet.map(ReactDOM.findDOMNode(this), {
       crs: Leaflet.CRS.Simple,
       preferCanvas: true,
-      minZoom: -2
+      minZoom: -2,
     });
-
     this.map.fitBounds(startBounds);
+    this.initialize();
     this.props.onRMapMounted(this);
   }
 
@@ -430,21 +430,94 @@ class RMap extends React.Component {
     this.map = null;
   }
 
-  // Leaflet 1 will stop displaying new data after going back to
-  // this app's html webpage from another html page unless its
-  // layers are reset
   initialize() {
-    if (this.odoPathLayerGroup != null) {
-      this.map.removeLayer(this.odoPathLayerGroup);
-      this.oX = null;
-      this.oY = null;
+    this.oX = null;
+    this.oY = null;
+    this.timesHandledMapData = 0;
+    this.bestPath = Leaflet.geoJSON(null, {
+      style: {
+        color: "blue",
+        weight: 4,
+        opacity: 0.3
+      }
+    });
+    this.odoPathLayerGroup = Leaflet.geoJSON(null, {
+      style: {
+        color: "red",
+        weight: 4,
+        opacity: 0.3
+      }
+    });
+    this.truePath = Leaflet.geoJSON(null, {
+      style: {
+        color: "green",
+        weight: 4,
+        opacity: 0.3
+      }
+    });
+    this.particles = Leaflet.layerGroup([]);
+    this.landmarks = Leaflet.layerGroup([]);
+    this.refreshStaticMapLayersRequested = true;
+    var overlayLayers = {
+      "FastSLAM Path": this.bestPath,
+      "Odometric Path": this.odoPathLayerGroup,
+      "True Path": this.truePath,
+      "Particles (experimental!)": this.particles,
+      "Landmarks": this.landmarks
+    };
+
+    // Leaflet will stop displaying new data after a
+    // reconnection unless its layers are reset
+    if (this.overlayLayersControl != null) {
+      this.map.removeControl(this.overlayLayersControl);
+      this.map.eachLayer((layer) => {
+        this.map.removeLayer(layer);
+      });
     }
-    this.odoPathLayerGroup = Leaflet.geoJSON(null, {}).addTo(this.map);
+    this.map.addLayer(this.bestPath);
+    this.map.addLayer(this.odoPathLayerGroup);
+    this.map.addLayer(this.truePath);
+    this.map.addLayer(this.particles);
+    this.map.addLayer(this.landmarks);
+
+    this.overlayLayersControl = Leaflet.control.layers(null, overlayLayers);
+    this.overlayLayersControl.addTo(this.map);
+    console.log("map initialized");
   }
 
-  // it is prohibitively slow to handle new map data by passing it as props to be
+  // It is prohibitively slow to handle new map data by passing it as props to be
   // applied to the map in the render method
   handleMapData(jsonData) {
+
+    // Unmodifed Leaflet isn't really designed to render
+    // a large number of particles
+    // TODO: use a more efficent Canvas (or WebGL) based renderer?
+    this.timesHandledMapData++
+    if (this.timesHandledMapData > 2000) {
+      this.map.removeLayer(this.particles);
+    }
+
+    if (this.refreshStaticMapLayersRequested) {
+      jsonData.trueLandmarks.map((pnt) => {
+        this.landmarks.addLayer(Leaflet.circleMarker([pnt.x, pnt.y], {
+          radius: 5,
+          fillColor: "green",
+          fillOpacity: 1,
+          stroke: false
+        }));
+      });
+      this.refreshStaticMapLayersRequested = false;
+    }
+
+    var particleLayersList = jsonData.particles.slice(0, Math.min(jsonData.particles.length, 10)).map((pnt) => {
+      return Leaflet.circleMarker([pnt.x, pnt.y], {
+        radius: 1,
+        opacity: 0.1
+      });
+    });
+    var newParticlesLayerGroup = Leaflet.layerGroup(particleLayersList);
+    this.particles.addLayer(newParticlesLayerGroup);
+
     var y = jsonData.odoPose.y;
     var x = jsonData.odoPose.x;
     if (this.oY && this.oX) {
@@ -453,8 +526,32 @@ class RMap extends React.Component {
         coordinates: [[this.oY, this.oX], [y, x]]
       });
     }
+
     this.oY = y;
     this.oX = x;
+    var trueY = jsonData.truePose.y;
+    var trueX = jsonData.truePose.x;
+
+    if (this.oldTrueY && this.oldTrueX) {
+      this.truePath.addData({
+        type: "LineString",
+        coordinates: [[this.oldTrueY, this.oldTrueX], [trueY, trueX]]
+      });
+    }
+    this.oldTrueY = trueY;
+    this.oldTrueX = trueX;
+
+    var bestY = jsonData.bestPose.y;
+    var bestX = jsonData.bestPose.x;
+
+    if (this.oldBestY && this.oldBestX) {
+      this.bestPath.addData({
+        type: "LineString",
+        coordinates: [[this.oldBestY, this.oldBestX], [bestY, bestX]]
+      });
+    }
+    this.oldBestY = bestY;
+    this.oldBestX = bestX;
   }
 
   render() {

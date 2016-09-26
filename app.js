@@ -53,7 +53,6 @@ io.on('connection', (socket) => {
 
   // for now, always get an unspecified robot:
   ses.kalyClient = new WebSocket('ws://localhost:9000/api/ws/robot');
-  
 
   ses.kalyClient.on('message', (data, flags) => {
     socket.emit('message', data);
