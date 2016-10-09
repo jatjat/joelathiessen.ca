@@ -1,3 +1,4 @@
+const NUM_PLACES = 2;
 var express = require('express');
 var path = require('path');
 var swig = require('swig');
@@ -55,7 +56,13 @@ io.on('connection', (socket) => {
   ses.kalyClient = new WebSocket('ws://localhost:9000/api/ws/robot');
 
   ses.kalyClient.on('message', (data, flags) => {
-    socket.emit('message', data);
+    var lessPrecise = JSON.stringify(JSON.parse(data), (key, value) => {
+      if (typeof value == "number") {
+        return parseFloat(value.toFixed(NUM_PLACES))
+      }
+      return value;
+    });
+    socket.emit('message', lessPrecise);
   });
 
   socket.on('message', (data, flags) => {
@@ -72,13 +79,14 @@ io.on('connection', (socket) => {
           sensorAngStdev: Math.max(0, data.msg.sensorAngStdev)
         }
       }
-    } else if (data.msgType == "robotSettings")
+    } else if (data.msgType == "robotSettings") {
       validData = {
         "msgType": "robotSettings",
         "msg": {
           running: data.msg.running == true,
           resetting: data.msg.resetting == true
         }
+      }
     }
 
     if (validData != null) {
