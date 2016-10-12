@@ -7,7 +7,7 @@
     "JSXExpressionsSingleLine": true,
     "formatJSX": true,
     "attrsOnSameLineAsTag": true,
-    "maxAttrsOnTag": 1,
+    "maxAttrsOnTag": 3,
     "firstAttributeOnSameLine": false,
     "spaceInJSXExpressionContainers": "",
     "alignWithFirstAttribute": true,
