@@ -41,13 +41,15 @@ export class RobotsApp extends React.Component {
       var jsonData = JSON.parse(data);
       this.history += jsonData
 
-      if (this.state.isRunning == false) {
-        this.setState({
-          isRunning: true
-        });
-      }
       if (this.rMap != null) {
-        this.rMap.handleMapData(jsonData);
+        if (jsonData.msgType == "fastSlamInfo") {
+          this.rMap.handleMapData(jsonData.msg);
+        } else if (jsonData.msgType == "robotSettings") {
+          this.setState({
+            isRunning: jsonData.msg.running,
+            resetting: jsonData.msg.resetting
+          });
+        }
       }
     });
 
@@ -224,8 +226,8 @@ export class RobotsApp extends React.Component {
       }
 
       var applyMsg = {
-        "msgType": "fastSlamSettings",
-        "msg": {
+        msgType: "fastSlamSettings",
+        msg: {
           numParticles: nParticles,
           sensorDistStdev: sDistStdev,
           sensorAngStdev: sAngStdev
@@ -239,8 +241,8 @@ export class RobotsApp extends React.Component {
   handleStartButtonClick() {
     if (this.state.connected == "connected") {
       var startMsg = {
-        "msgType": "robotSettings",
-        "msg": {
+        msgType: "robotSettings",
+        msg: {
           running: !this.state.isRunning,
           resetting: false
         }
@@ -254,8 +256,8 @@ export class RobotsApp extends React.Component {
 
     if (this.state.connected == "connected") {
       var resetMsg = {
-        "msgType": "robotSettings",
-        "msg": {
+        msgType: "robotSettings",
+        msg: {
           running: this.state.isRunning,
           resetting: true
         }
