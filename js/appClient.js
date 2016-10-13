@@ -7,6 +7,12 @@ import dinoImg from '../img/Dino.png';
 import { ReactPDF } from './pdfViewer';
 import { RobotsApp } from './robotsAppClient';
 
+var rotl33tStr = (string) => {
+    return string.replace(/[A-Za-z]/g, (char) => {
+      return String.fromCharCode(char.charCodeAt(0) + (char.toUpperCase() <= "M" ? 13 : -13));
+    });
+  }
+
 var App = React.createClass({
   render() {
     return (
@@ -55,6 +61,7 @@ var TopBar = React.createClass({
       );
   }
 })
+
 var MainGrid = React.createClass({
   render() {
     return (
@@ -71,6 +78,7 @@ var MainGrid = React.createClass({
       );
   }
 })
+
 var Jumbo = React.createClass({
   render() {
     return (
@@ -87,6 +95,7 @@ var Jumbo = React.createClass({
       );
   }
 })
+
 var Main = React.createClass({
   render() {
     return (
@@ -111,8 +120,16 @@ var Main = React.createClass({
       </Panel>
     )
   }
-})
+});
+
 var Employers = React.createClass({
+
+  getDefaultProps() {
+    return {
+        resSrc: rotl33tStr("/choyvp/erf.wct")
+    };
+  },
+
   render() {
     return (
       <Grid>
@@ -135,7 +152,7 @@ var Employers = React.createClass({
               </Panel>
               <span></span>
               <Well>
-                  <ReactPDF src="/public/res.pdf" />
+                  <ReactPDF src={this.props.resSrc} />
               </Well>
               </Col>
               <Col xs={12} md={9}>
@@ -145,11 +162,13 @@ var Employers = React.createClass({
       );
   }
 })
+
 var Robots = React.createClass({
   render() {
     return (<RobotsApp namespace="/" />);
   }
 })
+
 var Friends = React.createClass({
   render() {
     return (
@@ -163,6 +182,7 @@ var Friends = React.createClass({
       );
   }
 })
+
 var About = React.createClass({
   render() {
     return (
@@ -179,6 +199,7 @@ var About = React.createClass({
       );
   }
 })
+
 var Root = React.createClass({
   render() {
     return (
@@ -195,4 +216,5 @@ var Root = React.createClass({
       );
   }
 })
+
 ReactDOM.render(<Root />, document.getElementById('content'))
