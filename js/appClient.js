@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Input, Button, Image, Jumbotron, Grid, Row, Col, Panel, LinkWithTooltip, Well } from 'react-bootstrap';
 import { Router, Route, Link, IndexRedirect, hashHistory } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
-import dinoImg from '../img/Dino.png';
 import { ReactPDF } from './pdfViewer';
 import { RobotsApp } from './robotsAppClient';
 
@@ -33,7 +32,6 @@ var TopBar = React.createClass({
           <Navbar.Header>
               <Navbar.Brand>
                   <div>
-                      <Image src={dinoImg} cicle className="topIcon" />
                       <a href="#" className="topText">Joel Thiessen's Website</a>
                   </div>
               </Navbar.Brand>
