@@ -18,9 +18,9 @@ export class RobotsApp extends React.Component {
       isRunning: true // to prevent StartButton from flashing on page load
     }
     this.MAX_PARTICLES = 100;
-    this.DEFAULT_NUM_PARTICLES = 10;
-    this.DEFAULT_DIST_STDEV = 0.1;
-    this.DEFAULT_ANG_STDEV = 0.1;
+    this.DEFAULT_NUM_PARTICLES = 20;
+    this.DEFAULT_DIST_STDEV = 0.5;
+    this.DEFAULT_ANG_STDEV = 0.01;
     this.rMap = null;
     this.history = [];
 
@@ -303,7 +303,7 @@ export class RobotsApp extends React.Component {
                       FastSLAM is an algorithm that lets an agent like a robot keep an accurate map with information about where it has been, and what it has seen, using odometric and laser or video sensor data.
                   </p>
                   <p>
-                      A robot implementing FastSLAM has particles each representing a possible robot <i>pose</i> (position and orientation). For a given step of the algorithm, the robot combines odometry and measurements to all the <i>features</i> that its sensors can see, as if from each of its particles. If a feature has been seen before in the position that a particle expects, (i.e. it corresponds to a <i>landmark</i>), the <i>weight</i> of the particle is adjusted based on how good the match is. Otherwise the feature is added as a new landmark. Finally, the particles are replaced with copies of the highest weighted particles. You can read more <a href="http://robots.stanford.edu/papers/montemerlo.fastslam-tr.pdf">here.</a>
+                      A robot implementing FastSLAM has particles each representing a possible robot pose (position and orientation). For a given step of the algorithm, the robot combines odometry and measurements to all the features that its sensors can see, as if from each of its particles. If a feature has been seen before in the position that a particle expects, (i.e. it corresponds to a landmark, the weight of the particle is adjusted based on how good the match is. Otherwise the feature is added as a new landmark. Finally, the particles are replaced with copies of the highest weighted particles. You can read more <a href="http://robots.stanford.edu/papers/montemerlo.fastslam-tr.pdf">here.</a>
                   </p>
                   <h5>Number of Particles:</h5> FastSLAM is O(mlog(n)) where m is the number of particles, and n the number of landmarks. While more particles cause better accuracy, in aggregate they are expensive, and you may get excellent results even with 5-10 particles! There is experimental support for viewing up to 10.
                   <p>
@@ -421,7 +421,7 @@ class RMap extends React.Component {
     this.map = Leaflet.map(ReactDOM.findDOMNode(this), {
       crs: Leaflet.CRS.Simple,
       preferCanvas: true,
-      minZoom: -2,
+      minZoom: 0,
     });
     this.map.fitBounds(startBounds);
     this.initialize();

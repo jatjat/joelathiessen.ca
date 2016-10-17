@@ -101,8 +101,6 @@ var Main = React.createClass({
           <p>
               <span>Employers, you can see my resume </span>
               <Link id="resumeLink" to="/employers">here</Link>
-              <span>, or my FastSLAM demo </span>
-              <Link id="fastSLAMLink" to="/robots">here.</Link>
           </p>
           <p>
               <span>Friends, when I have something to share, it’ll be </span>
@@ -111,8 +109,8 @@ var Main = React.createClass({
           <p>
               <span>If you want to see the source-code for this </span>
               <a id="webGitHubLink" href="https://github.com/jatjat/joelathiessen.ca">website</a>
-              <span>, or my FastSLAM </span>
-              <a id="fastSLAMGitHubLink" href="https://github.com/jatjat/kaly2">demo</a>
+              <span>, or my </span>
+              <a id="fastSLAMGitHubLink" href="https://github.com/jatjat/kaly2">FastSLAM demo</a>
               <span>, my GitHub is </span>
               <a id="parentGitHubLink" href="https://github.com/jatjat">here.</a></p>
       </Panel>
@@ -144,7 +142,7 @@ var Employers = React.createClass({
                   <br />
                   <br /> This website was my introduction to ES6, React, and Node.js, and my FastSLAM implementation is written in Kotlin—I like learning new things!
                   <br />
-                  <br /> A viewable copy of my resume is included below.
+                  <br /> A viewable copy of my resume is included below <a id="resumeDownloadLink" href={this.props.resSrc} download="JoelThiessenResume.pdf">(download)</a>.
                   <br />
                   </Col>
               </Panel>
@@ -188,8 +186,16 @@ var About = React.createClass({
           <Row>
               <Col xs={12} md={9}>
               <Panel>
+              <Col xs={4} md={4}>
+            <Image src="/img/JoelThiessenPhotoSmall.jpeg" rounded responsive />
+              </Col>
+            <span></span>
+            <Col xs={4} md={8}>
+              <Panel>
                   About this website: it's mostly for projects I think are cool, and for necessary marketing.
                   <br /> About me: I enjoy reading and thinking.
+            </Panel>
+            </Col>
               </Panel>
               </Col>
           </Row>
