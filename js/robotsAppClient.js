@@ -310,7 +310,7 @@ export class RobotsApp extends React.Component {
                   </p>
                   <h5>Hypothetical sensor distance & angle standard deviations:</h5>
                   <p>
-                      {"FastSLAM guesses the accuracy of its sensors. The real accuracies of this robot's sensor are σ = " + this.DEFAULT_DIST_STDEV + " distance units and σ = " + this.DEFAULT_ANG_STDEV + " radians. Tuning the guesses may produce better results."}
+                      {"FastSLAM guesses the accuracy of its sensors. The real standard deviations for a measurement from this robot's sensor are σ = 0.001 distance units and σ = 0.001 radians. Tuning the guesses may produce better results."}
                   </p>
               </Modal.Body>
               <Modal.Footer>
