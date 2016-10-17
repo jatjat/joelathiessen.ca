@@ -7,10 +7,10 @@ import { ReactPDF } from './pdfViewer';
 import { RobotsApp } from './robotsAppClient';
 
 var rotl33tStr = (string) => {
-    return string.replace(/[A-Za-z]/g, (char) => {
-      return String.fromCharCode(char.charCodeAt(0) + (char.toUpperCase() <= "M" ? 13 : -13));
-    });
-  }
+  return string.replace(/[A-Za-z]/g, (char) => {
+    return String.fromCharCode(char.charCodeAt(0) + (char.toUpperCase() <= "M" ? 13 : -13));
+  });
+}
 
 var App = React.createClass({
   render() {
@@ -44,9 +44,6 @@ var TopBar = React.createClass({
                   </LinkContainer>
                   <LinkContainer to={"/employers"}>
                       <NavItem eventKey={2} href="#">Employers</NavItem>
-                  </LinkContainer>
-                  <LinkContainer to={"/friends"}>
-                      <NavItem eventKey={2} href="#">Friends</NavItem>
                   </LinkContainer>
               </Nav>
               <Nav pullRight>
@@ -99,12 +96,8 @@ var Main = React.createClass({
     return (
       <Panel>
           <p>
-              <span>Employers, you can see my resume </span>
+              <span>Employers, you can see <Link id="aboutLink" to="/about">my</Link> resume </span>
               <Link id="resumeLink" to="/employers">here</Link>
-          </p>
-          <p>
-              <span>Friends, when I have something to share, it’ll be </span>
-              <Link id="friendsLink" to="/friends">here.</Link>
           </p>
           <p>
               <span>If you want to see the source-code for this </span>
@@ -122,7 +115,7 @@ var Employers = React.createClass({
 
   getDefaultProps() {
     return {
-        resSrc: rotl33tStr("/choyvp/erf.cqs")
+      resSrc: rotl33tStr("/choyvp/erf.cqs")
     };
   },
 
@@ -142,7 +135,7 @@ var Employers = React.createClass({
                   <br />
                   <br /> This website was my introduction to ES6, React, and Node.js, and my FastSLAM implementation is written in Kotlin—I like learning new things!
                   <br />
-                  <br /> A viewable copy of my resume is included below <a id="resumeDownloadLink" href={this.props.resSrc} download="JoelThiessenResume.pdf">(download)</a>.
+                  <br /> A viewable copy of my resume is included below <a id="resumeDownloadLink" href={this.props.resSrc} download="JoelThiessenResume.pdf">(direct link)</a>.
                   <br />
                   </Col>
               </Panel>
@@ -165,20 +158,6 @@ var Robots = React.createClass({
   }
 })
 
-var Friends = React.createClass({
-  render() {
-    return (
-      <Grid>
-          <Row>
-              <Col xs={12} md={9}>
-              <Image src="/img/reepicheepLarge.png" responsive />
-              </Col>
-          </Row>
-      </Grid>
-      );
-  }
-})
-
 var About = React.createClass({
   render() {
     return (
@@ -186,16 +165,16 @@ var About = React.createClass({
           <Row>
               <Col xs={12} md={9}>
               <Panel>
-              <Col xs={4} md={4}>
-            <Image src="/img/JoelThiessenPhotoSmall.jpeg" rounded responsive />
-              </Col>
-            <span></span>
-            <Col xs={4} md={8}>
-              <Panel>
-                  About this website: it's mostly for projects I think are cool, and for necessary marketing.
-                  <br /> About me: I enjoy reading and thinking.
-            </Panel>
-            </Col>
+                  <Col xs={4} md={4}>
+                  <Image src="/img/JoelThiessenPhotoSmall.jpeg" rounded responsive />
+                  </Col>
+                  <span></span>
+                  <Col xs={4} md={8}>
+                  <Panel>
+                      About this website: it's mostly for projects I think are cool, and for necessary marketing.
+                      <br /> About me: I enjoy reading and thinking.
+                  </Panel>
+                  </Col>
               </Panel>
               </Col>
           </Row>
@@ -213,7 +192,6 @@ var Root = React.createClass({
               <Route path="/main" component={MainGrid} />
               <Route path="/employers" component={Employers} />
               <Route path="/robots" component={Robots} />
-              <Route path="/friends" component={Friends} />
               <Route path="/about" component={About} />
           </Route>
       </Router>
