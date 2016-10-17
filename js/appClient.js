@@ -122,7 +122,7 @@ var Employers = React.createClass({
 
   getDefaultProps() {
     return {
-        resSrc: rotl33tStr("/choyvp/erf.wct")
+        resSrc: rotl33tStr("/choyvp/erf.cqs")
     };
   },
 
