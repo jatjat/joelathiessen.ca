@@ -15,7 +15,8 @@ export class RobotsApp extends React.Component {
       sensorDistStdev: "",
       sensorAngStdev: "",
       showHelpModal: false,
-      isRunning: true // to prevent StartButton from flashing on page load
+      isRunning: true, // to prevent StartButton from flashing on page load
+      resetting: false
     }
     this.MAX_PARTICLES = 100;
     this.DEFAULT_NUM_PARTICLES = 20;
@@ -42,7 +43,7 @@ export class RobotsApp extends React.Component {
       this.history += jsonData
 
       if (this.rMap != null) {
-        if (jsonData.msgType == "fastSlamInfo") {
+        if (jsonData.msgType == "fastSlamInfo" && this.state.resetting == false) {
           this.rMap.handleMapData(jsonData.msg);
         } else if (jsonData.msgType == "robotSettings") {
           this.setState({
@@ -54,10 +55,6 @@ export class RobotsApp extends React.Component {
     });
 
     this.io.on('connect', () => {
-
-      if (this.state.connected == "disconnected") {
-        this.rMap.initialize();
-      }
       this.setState({
         connected: "connected",
       });
@@ -102,7 +99,6 @@ export class RobotsApp extends React.Component {
   }
 
   getNumParticlesValidationState(includeMsg) {
-
     var validity = null;
     var msg = null;
     if (Validator.isInt(this.state.numParticles, {
@@ -253,7 +249,6 @@ export class RobotsApp extends React.Component {
   }
 
   handleResetButtonClick() {
-
     if (this.state.connected == "connected") {
       var resetMsg = {
         msgType: "robotSettings",
@@ -262,6 +257,10 @@ export class RobotsApp extends React.Component {
           resetting: true
         }
       }
+      this.rMap.resetMap();
+      this.setState({
+        resetting: true
+      })
       this.io.emit("message", resetMsg);
     }
   }
@@ -417,13 +416,6 @@ class RMap extends React.Component {
     super(props);
   }
   componentDidMount() {
-    const startBounds = [[90, 150], [230, 470]];
-    this.map = Leaflet.map(ReactDOM.findDOMNode(this), {
-      crs: Leaflet.CRS.Simple,
-      preferCanvas: true,
-      minZoom: 0,
-    });
-    this.map.fitBounds(startBounds);
     this.initialize();
     this.props.onRMapMounted(this);
   }
@@ -432,10 +424,27 @@ class RMap extends React.Component {
     this.map = null;
   }
 
+  resetMap() {
+    this.map.off();
+    this.map.remove();
+    this.initialize();
+  }
+
   initialize() {
     this.oX = null;
     this.oY = null;
+    this.oldTrueY = null;
+    this.oldTrueX = null;
+    this.oldBestY = null;
+    this.oldBestX = null;
     this.timesHandledMapData = 0;
+    const startBounds = [[90, 150], [230, 470]];
+    this.map = Leaflet.map(ReactDOM.findDOMNode(this), {
+      crs: Leaflet.CRS.Simple,
+      preferCanvas: true,
+      minZoom: 0,
+    });
+    this.map.fitBounds(startBounds);
     this.bestPath = Leaflet.geoJSON(null, {
       style: {
         color: "blue",
