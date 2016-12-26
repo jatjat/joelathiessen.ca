@@ -6,7 +6,6 @@ import IO from 'socket.io-client';
 import Leaflet from 'leaflet';
 
 export class RobotsApp extends React.Component {
-
   constructor(props) {
     super(props)
     this.state = {
@@ -79,8 +78,6 @@ export class RobotsApp extends React.Component {
   handleMadeRMap(rMap) {
     this.rMap = rMap;
   }
-
-  componentDidMount() {}
 
   componentWillUnmount() {
     this.io.disconnect();
@@ -199,7 +196,6 @@ export class RobotsApp extends React.Component {
       sensorAngStdev: e.target.value
     });
   }
-
 
   handleApplyButtonClick() {
     if (this.state.connected == "connected"
@@ -409,9 +405,7 @@ StartButton.propTypes = {
   onClick: React.PropTypes.func.isRequired
 }
 
-
 class RMap extends React.Component {
-
   constructor(props) {
     super(props);
   }
@@ -431,8 +425,8 @@ class RMap extends React.Component {
   }
 
   initialize() {
-    this.oX = null;
-    this.oY = null;
+    this.oldOdoX = null;
+    this.oldOdoY = null;
     this.oldTrueY = null;
     this.oldTrueX = null;
     this.oldBestY = null;
@@ -529,20 +523,19 @@ class RMap extends React.Component {
     var newParticlesLayerGroup = Leaflet.layerGroup(particleLayersList);
     this.particles.addLayer(newParticlesLayerGroup);
 
-    var y = jsonData.odoPose.y;
-    var x = jsonData.odoPose.x;
-    if (this.oY && this.oX) {
+    var odoY = jsonData.odoPose.y;
+    var odoX = jsonData.odoPose.x;
+    if (this.oldOdoY && this.oldOdoX) {
       this.odoPathLayerGroup.addData({
         type: "LineString",
-        coordinates: [[this.oY, this.oX], [y, x]]
+        coordinates: [[this.oldOdoY, this.oldOdoX], [odoY, odoX]]
       });
     }
+    this.oldOdoY = odoY;
+    this.oldOdoX = odoX;
 
-    this.oY = y;
-    this.oX = x;
     var trueY = jsonData.truePose.y;
     var trueX = jsonData.truePose.x;
-
     if (this.oldTrueY && this.oldTrueX) {
       this.truePath.addData({
         type: "LineString",
@@ -554,7 +547,6 @@ class RMap extends React.Component {
 
     var bestY = jsonData.bestPose.y;
     var bestX = jsonData.bestPose.x;
-
     if (this.oldBestY && this.oldBestX) {
       this.bestPath.addData({
         type: "LineString",
