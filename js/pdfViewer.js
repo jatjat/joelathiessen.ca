@@ -1,4 +1,6 @@
-// From http://codepen.io/akfish/pen/LNWXrM
+// There doesn't seem to be a simultaneous multipage PDF.js React component on NPM
+// and the React component wrappers for PDF.js on NPM are trivial.
+// From http://codepen.io/akfish/pen/LNWXrMs
 
 import React from 'react';
 require("pdfjs-dist")
@@ -131,15 +133,6 @@ export class Viewer extends React.Component {
 }
 Viewer.contextTypes = PDF.childContextTypes
 
-/*// Demo code:
-//React.render((
-  <PDF src={PDF_URL}>
-      <Viewer />
-  </PDF>
-//  ), document.getElementById('container'))
-*/
-
-// Joel's code:
 export class ReactPDF extends React.Component {
   render() {
     return (
