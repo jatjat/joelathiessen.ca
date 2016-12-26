@@ -9,5 +9,4 @@ I'm indebted to [this tutorial](https://www.jonathan-petitcolas.com/2015/05/15/h
 Todo:
   - Refactor robot app inter-object communication for simplicity and directness; maybe by using Redux or Flux
   - Improve resuming robot simulation after browser unsuspension
-  - Consistently use  ES6 classes for React components
   - Use protobufs, or a competitor, to minimize websocket connection bandwidth and specify message contracts?

@@ -6,13 +6,13 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { ReactPDF } from './pdfViewer';
 import { RobotsApp } from './robotsAppClient';
 
-var rotl33tStr = (string) => {
+const rotl33tStr = (string) => {
   return string.replace(/[A-Za-z]/g, (char) => {
     return String.fromCharCode(char.charCodeAt(0) + (char.toUpperCase() <= "M" ? 13 : -13));
   });
 }
 
-var App = React.createClass({
+class App extends React.Component {
   render() {
     return (
       <div>
@@ -23,9 +23,9 @@ var App = React.createClass({
       </div>
       );
   }
-})
+}
 
-var TopBar = React.createClass({
+class TopBar extends React.Component {
   render() {
     return (
       <Navbar>
@@ -55,9 +55,9 @@ var TopBar = React.createClass({
       </Navbar>
       );
   }
-})
+}
 
-var MainGrid = React.createClass({
+class MainGrid extends React.Component {
   render() {
     return (
       <Grid>
@@ -72,9 +72,9 @@ var MainGrid = React.createClass({
       </Grid>
       );
   }
-})
+}
 
-var Jumbo = React.createClass({
+class Jumbo extends React.Component {
   render() {
     return (
       <Jumbotron>
@@ -89,9 +89,9 @@ var Jumbo = React.createClass({
       </Jumbotron>
       );
   }
-})
+}
 
-var Main = React.createClass({
+class Main extends React.Component {
   render() {
     return (
       <Panel>
@@ -109,16 +109,9 @@ var Main = React.createClass({
       </Panel>
     )
   }
-});
+}
 
-var Employers = React.createClass({
-
-  getDefaultProps() {
-    return {
-      resSrc: rotl33tStr("/choyvp/erf.cqs")
-    };
-  },
-
+class Employers extends React.Component {
   render() {
     return (
       <Grid>
@@ -150,15 +143,18 @@ var Employers = React.createClass({
       </Grid>
       );
   }
-})
+}
+Employers.defaultProps = {
+  resSrc: rotl33tStr("/choyvp/erf.cqs")
+}
 
-var Robots = React.createClass({
+class Robots extends React.Component {
   render() {
     return (<RobotsApp namespace="/" />);
   }
-})
+}
 
-var About = React.createClass({
+class About extends React.Component {
   render() {
     return (
       <Grid>
@@ -181,9 +177,9 @@ var About = React.createClass({
       </Grid>
       );
   }
-})
+}
 
-var Root = React.createClass({
+class Root extends React.Component {
   render() {
     return (
       <Router history={hashHistory}>
@@ -197,6 +193,6 @@ var Root = React.createClass({
       </Router>
       );
   }
-})
+}
 
 ReactDOM.render(<Root />, document.getElementById('content'))
