@@ -21,18 +21,18 @@ export class RobotsApp extends React.Component {
     this.DEFAULT_NUM_PARTICLES = 20;
     this.DEFAULT_DIST_STDEV = 0.5;
     this.DEFAULT_ANG_STDEV = 0.01;
-    this.rMap = null;
+    this.handleMapData = null;
     this.history = [];
 
-    this.handleNumParticlesChange = this.handleNumParticlesChange.bind(this);
-    this.handleSensorDistStdevChange = this.handleSensorDistStdevChange.bind(this);
-    this.handleSensorAngStdevChange = this.handleSensorAngStdevChange.bind(this);
-    this.openHelpModal = this.openHelpModal.bind(this);
-    this.closeHelpModal = this.closeHelpModal.bind(this);
-    this.handleMadeRMap = this.handleMadeRMap.bind(this);
-    this.handleStartButtonClick = this.handleStartButtonClick.bind(this);
-    this.handleApplyButtonClick = this.handleApplyButtonClick.bind(this);
-    this.handleResetButtonClick = this.handleResetButtonClick.bind(this);
+    this.handleNumParticlesChange = ::this.handleNumParticlesChange;
+    this.handleSensorDistStdevChange = ::this.handleSensorDistStdevChange;
+    this.handleSensorAngStdevChange = ::this.handleSensorAngStdevChange;
+    this.openHelpModal = ::this.openHelpModal;
+    this.closeHelpModal = ::this.closeHelpModal;
+    this.setHandleMapData = ::this.setHandleMapData;
+    this.handleStartButtonClick = ::this.handleStartButtonClick;
+    this.handleApplyButtonClick = ::this.handleApplyButtonClick;
+    this.handleResetButtonClick = ::this.handleResetButtonClick;
 
     this.io = IO(this.props.namespace, {
       reconnect: true,
@@ -41,9 +41,9 @@ export class RobotsApp extends React.Component {
       var jsonData = JSON.parse(data);
       this.history += jsonData
 
-      if (this.rMap != null) {
+      if (this.handleMapData != null) {
         if (jsonData.msgType == "fastSlamInfo" && this.state.resetting == false) {
-          this.rMap.handleMapData(jsonData.msg);
+          this.handleMapData(jsonData.msg);
         } else if (jsonData.msgType == "robotSettings") {
           this.setState({
             isRunning: jsonData.msg.running,
@@ -75,8 +75,8 @@ export class RobotsApp extends React.Component {
     });
   }
 
-  handleMadeRMap(rMap) {
-    this.rMap = rMap;
+  setHandleMapData(handleMapData) {
+    this.handleMapData = handleMapData;
   }
 
   componentWillUnmount() {
@@ -316,7 +316,7 @@ export class RobotsApp extends React.Component {
               <Row>
                   <Col xs={12} md={8} mdPush={4}>
                   <Panel className="mapPanel">
-                      <RMap onRMapMounted={this.handleMadeRMap} />
+                      <RMap mapDataHandler={this.setHandleMapData} />
                   </Panel>
                   </Col>
                   <Col xs={12} md={4} mdPull={8}>
@@ -408,10 +408,11 @@ StartButton.propTypes = {
 class RMap extends React.Component {
   constructor(props) {
     super(props);
+    this.handleMapData = ::this.handleMapData;
   }
   componentDidMount() {
     this.initialize();
-    this.props.onRMapMounted(this);
+    this.props.mapDataHandler(this.handleMapData);
   }
 
   componentWillUnmount() {
@@ -490,13 +491,12 @@ class RMap extends React.Component {
     console.log("map initialized");
   }
 
-  // It is prohibitively slow to handle new map data by passing it as props to be
-  // applied to the map in the render method
+  // It is prohibitively slow to handle new map data by passing it as state
   handleMapData(jsonData) {
 
     // Unmodifed Leaflet isn't really designed to render
     // a large number of particles
-    // TODO: use a more efficent Canvas (or WebGL) based renderer?
+    // TODO: use a more efficent Canvas, or WebGL, based renderer?
     this.timesHandledMapData++
     if (this.timesHandledMapData > 2000) {
       this.map.removeLayer(this.particles);
@@ -562,5 +562,5 @@ class RMap extends React.Component {
   }
 }
 RMap.propTypes = {
-  onRMapMounted: React.PropTypes.func.isRequired
+  mapDataHandler: React.PropTypes.func.isRequired
 }
