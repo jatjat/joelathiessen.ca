@@ -1,6 +1,7 @@
 Possible Todo List
 ==================
 
+  - Clean up the warnings where possible (e.g. some (all?) React-Bootstrap warnings seem to be unavoidable)
   - Separate application and display logic
     - Pros:
       - React idiomatic: better separation of concerns
@@ -11,7 +12,7 @@ Possible Todo List
   - Use Redux or Flux for broadcasting messages recieved from the websocket
     - Pros: 
       - Simplified separation of display and application logic?
-      - Less complicated component state management?
+      - More explicit component state management?
     - Cons: 
       - heavier runtime, more initial boilerplate
     - Verdict: 
