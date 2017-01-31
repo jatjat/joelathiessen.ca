@@ -30,6 +30,7 @@ export class RobotsApp extends React.Component {
     this.openHelpModal = ::this.openHelpModal;
     this.closeHelpModal = ::this.closeHelpModal;
     this.setHandleMapData = ::this.setHandleMapData;
+    this.setResetMap = ::this.setResetMap;
     this.handleStartButtonClick = ::this.handleStartButtonClick;
     this.handleApplyButtonClick = ::this.handleApplyButtonClick;
     this.handleResetButtonClick = ::this.handleResetButtonClick;
@@ -77,6 +78,10 @@ export class RobotsApp extends React.Component {
 
   setHandleMapData(handleMapData) {
     this.handleMapData = handleMapData;
+  }
+
+  setResetMap(resetMap) {
+    this.resetMap = resetMap
   }
 
   componentWillUnmount() {
@@ -134,7 +139,6 @@ export class RobotsApp extends React.Component {
   }
 
   getSensorDistStdevValidationState(includeMsg) {
-
     var validity = null;
     var msg = null;
     if (Validator.isFloat(this.state.sensorDistStdev, {
@@ -253,7 +257,7 @@ export class RobotsApp extends React.Component {
           resetting: true
         }
       }
-      this.rMap.resetMap();
+      this.resetMap();
       this.setState({
         resetting: true
       })
@@ -316,7 +320,7 @@ export class RobotsApp extends React.Component {
               <Row>
                   <Col xs={12} md={8} mdPush={4}>
                   <Panel className="mapPanel">
-                      <RMap mapDataHandler={this.setHandleMapData} />
+                      <RMap resetter={this.setResetMap} mapDataHandler={this.setHandleMapData} />
                   </Panel>
                   </Col>
                   <Col xs={12} md={4} mdPull={8}>
@@ -409,10 +413,12 @@ class RMap extends React.Component {
   constructor(props) {
     super(props);
     this.handleMapData = ::this.handleMapData;
+    this.resetMap = ::this.resetMap;
   }
   componentDidMount() {
     this.initialize();
     this.props.mapDataHandler(this.handleMapData);
+    this.props.resetter(this.resetMap);
   }
 
   componentWillUnmount() {
@@ -562,5 +568,6 @@ class RMap extends React.Component {
   }
 }
 RMap.propTypes = {
-  mapDataHandler: React.PropTypes.func.isRequired
+  mapDataHandler: React.PropTypes.func.isRequired,
+  resetter: React.PropTypes.func.isRequired
 }
