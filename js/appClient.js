@@ -118,17 +118,7 @@ class Employers extends React.Component {
           <Row>
               <Col xs={12} md={9}>
               <Panel>
-                  <Col xs={12} md={9}> Hey employers! Here's a little background about me:
-                  <br />
-                  <br /> I'm a Computer Science Co-op student currently completing my last semester at the University of Manitoba. I'll be graduating in January 2017.
-                  <br />
-                  <br /> In the course of my three work terms, highlights for me included creating a tool to facilitate the secure transfer of genomic data, implementing functionality improving the production of 3D and video visual effects, and instrumenting a multi-platform video-collaberation application for automation.
-                  <br />
-                  <br /> I've had a chance to work with many different technologies, from web-centric tech like Spring and Angular, to high performance modern C++, to cross platform C# for iOS and Android; and have worked in Linux and OS X extensively, often with Python.
-                  <br />
-                  <br /> This website was my introduction to ES6, React, and Node.js, and my FastSLAM implementation is written in Kotlin—I like learning new things!
-                  <br />
-                  <br /> A viewable copy of my resume is included below <a id="resumeDownloadLink" href={this.props.resSrc} download="JoelThiessenResume.pdf">(direct link)</a>.
+                  <Col xs={12} md={9}> A viewable copy of my resume is included below <a id="resumeDownloadLink" href={this.props.resSrc} download="JoelThiessenResume.pdf">(direct link)</a>.
                   <br />
                   </Col>
               </Panel>
@@ -167,8 +157,9 @@ class About extends React.Component {
                   <span></span>
                   <Col xs={4} md={8}>
                   <Panel>
-                      About this website: it's mostly for projects I think are cool, and for necessary marketing.
-                      <br /> About me: I enjoy reading and thinking.
+                      About this website: it's mostly for projects I think are cool, and my resume.
+                      <br />
+                      <br /> About me: I enjoy reading and robotics. 
                   </Panel>
                   </Col>
               </Panel>
