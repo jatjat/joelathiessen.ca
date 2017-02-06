@@ -2,10 +2,10 @@ var path = require('path');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var webpack = require('webpack');
 
-var isProd = process.env.NODE_ENV === 'isProduction';
+var isProd = process.env.NODE_ENV === 'production';
 
 function getEntrySources(sources) {
-    if (isProd) {
+    if (!isProd) {
         sources.push('webpack-dev-server/client?http://localhost:8080');
         sources.push('webpack/hot/only-dev-server');
     } else {
@@ -44,8 +44,15 @@ module.exports = {
 	    ]
 	},
     plugins: isProd ? [
+        new CopyWebpackPlugin([{
+            from: "node_modules/pdfjs-dist/build/pdf.worker.js",
+            to: "/public/appClient.worker.js"
+        }]),
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
+        new webpack.optimize.UglifyJsPlugin({ compress: {
+            drop_console: true,
+            warnings: false
+        } })
     ] : []
 };
