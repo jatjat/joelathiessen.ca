@@ -1,12 +1,11 @@
-Possible Todo List
+Todo List
 ==================
 
-  - Clean up the warnings where possible (e.g. some (all?) React-Bootstrap warnings seem to be unavoidable)
   - Separate application and display logic
     - Pros:
       - React idiomatic: better separation of concerns
     - Cons:
-      - Other than for input validation and websocket handling there is very little logic in this webapp at all; the heavy lifting is done in kaly2
+      - Other than for input validation and websocket handling there is very little logic in this webapp at all--the heavy lifting is done in kaly2
     - Verdict:
       - Only refactor this if planning on adding significantly more functionality
   - Use Redux or Flux for broadcasting messages recieved from the websocket
