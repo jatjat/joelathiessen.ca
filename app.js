@@ -75,8 +75,8 @@ io.on('connection', (socket) => {
         "msgType": "fastSlamSettings",
         "msg": {
           numParticles: Math.max(1, Math.min(100, data.msg.numParticles)),
-          sensorDistStdev: Math.max(0, data.msg.sensorDistStdev),
-          sensorAngStdev: Math.max(0, data.msg.sensorAngStdev)
+          sensorDistVar: Math.max(0, data.msg.sensorDistVar),
+          sensorAngVar: Math.max(0, data.msg.sensorAngVar)
         }
       }
     } else if (data.msgType == "robotSettings") {

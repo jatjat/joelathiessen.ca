@@ -11,22 +11,22 @@ export class RobotsApp extends React.Component {
     this.state = {
       connected: "uninitialized",
       numParticles: "",
-      sensorDistStdev: "",
-      sensorAngStdev: "",
+      sensorDistVar: "",
+      sensorAngVar: "",
       showHelpModal: false,
       isRunning: true, // to prevent StartButton from flashing on page load
       resetting: false
     }
     this.MAX_PARTICLES = 100;
     this.DEFAULT_NUM_PARTICLES = 20;
-    this.DEFAULT_DIST_STDEV = 0.5;
-    this.DEFAULT_ANG_STDEV = 0.01;
+    this.DEFAULT_DIST_VAR = 0.5;
+    this.DEFAULT_ANG_VAR = 0.01;
     this.handleMapData = null;
     this.history = [];
 
     this.handleNumParticlesChange = ::this.handleNumParticlesChange;
-    this.handleSensorDistStdevChange = ::this.handleSensorDistStdevChange;
-    this.handleSensorAngStdevChange = ::this.handleSensorAngStdevChange;
+    this.handleSensorDistVarChange = ::this.handleSensorDistVarChange;
+    this.handleSensorAngVarChange = ::this.handleSensorAngVarChange;
     this.openHelpModal = ::this.openHelpModal;
     this.closeHelpModal = ::this.closeHelpModal;
     this.setHandleMapData = ::this.setHandleMapData;
@@ -138,17 +138,17 @@ export class RobotsApp extends React.Component {
     });
   }
 
-  getSensorDistStdevValidationState(includeMsg) {
+  getSensorDistVarValidationState(includeMsg) {
     var validity = null;
     var msg = null;
-    if (Validator.isFloat(this.state.sensorDistStdev, {
+    if (Validator.isFloat(this.state.sensorDistVar, {
         min: 0
       })) {
       validity = "success";
-    } else if (Validator.isFloat(this.state.sensorDistStdev)) {
+    } else if (Validator.isFloat(this.state.sensorDistVar)) {
       validity = "error";
       msg = "A positive number is required";
-    } else if (this.state.sensorDistStdev != "") {
+    } else if (this.state.sensorDistVar != "") {
       validity = "error";
       msg = "A valid postive number is required";
     }
@@ -163,24 +163,24 @@ export class RobotsApp extends React.Component {
     }
   }
 
-  handleSensorDistStdevChange(e) {
+  handleSensorDistVarChange(e) {
     this.setState({
-      sensorDistStdev: e.target.value
+      sensorDistVar: e.target.value
     });
   }
 
-  getSensorAngStdevValidationState(includeMsg) {
+  getSensorAngVarValidationState(includeMsg) {
 
     var validity = null;
     var msg = null;
-    if (Validator.isFloat(this.state.sensorAngStdev, {
+    if (Validator.isFloat(this.state.sensorAngVar, {
         min: 0
       })) {
       validity = "success";
-    } else if (Validator.isFloat(this.state.sensorAngStdev)) {
+    } else if (Validator.isFloat(this.state.sensorAngVar)) {
       validity = "error";
       msg = "A positive number is required";
-    } else if (this.state.sensorAngStdev != "") {
+    } else if (this.state.sensorAngVar != "") {
       validity = "error";
       msg = "A valid positive number is required";
     }
@@ -195,38 +195,38 @@ export class RobotsApp extends React.Component {
     }
   }
 
-  handleSensorAngStdevChange(e) {
+  handleSensorAngVarChange(e) {
     this.setState({
-      sensorAngStdev: e.target.value
+      sensorAngVar: e.target.value
     });
   }
 
   handleApplyButtonClick() {
     if (this.state.connected == "connected"
       && this.getNumParticlesValidationState() != 'error'
-      && this.getSensorAngStdevValidationState() != 'error'
-      && this.getSensorDistStdevValidationState() != 'error') {
+      && this.getSensorAngVarValidationState() != 'error'
+      && this.getSensorDistVarValidationState() != 'error') {
 
 
       var nParticles = this.DEFAULT_NUM_PARTICLES;
       if (this.state.numParticles != "") {
         nParticles = parseFloat(this.state.numParticles)
       }
-      var sDistStdev = this.DEFAULT_DIST_STDEV;
-      if (this.state.sensorDistStdev != "") {
-        sDistStdev = parseFloat(this.state.sensorDistStdev)
+      var sDistVar = this.DEFAULT_DIST_VAR;
+      if (this.state.sensorDistVar != "") {
+        sDistVar = parseFloat(this.state.sensorDistVar)
       }
-      var sAngStdev = this.DEFAULT_ANG_STDEV;
-      if (this.state.sensorAngStdev != "") {
-        sAngStdev = parseFloat(this.state.sensorAngStdev)
+      var sAngVar = this.DEFAULT_ANG_VAR;
+      if (this.state.sensorAngVar != "") {
+        sAngVar = parseFloat(this.state.sensorAngVar)
       }
 
       var applyMsg = {
         msgType: "fastSlamSettings",
         msg: {
           numParticles: nParticles,
-          sensorDistStdev: sDistStdev,
-          sensorAngStdev: sAngStdev
+          sensorDistVar: sDistVar,
+          sensorAngVar: sAngVar
         }
       }
 
@@ -274,19 +274,19 @@ export class RobotsApp extends React.Component {
                                </HelpBlock>
       );
     }
-    var sensorDistStdevHelpBlock = null;
-    var sensorDistStdevValidity = this.getSensorDistStdevValidationState(true);
-    if (sensorDistStdevValidity.validity != 'success') {
-      sensorDistStdevHelpBlock = (<HelpBlock>
-                                      {sensorDistStdevValidity.msg}
+    var sensorDistVarHelpBlock = null;
+    var sensorDistVarValidity = this.getSensorDistVarValidationState(true);
+    if (sensorDistVarValidity.validity != 'success') {
+      sensorDistVarHelpBlock = (<HelpBlock>
+                                      {sensorDistVarValidity.msg}
                                   </HelpBlock>
       );
     }
-    var sensorAngStdevHelpBlock = null;
-    var sensorAngStdevValidity = this.getSensorAngStdevValidationState(true);
-    if (sensorAngStdevValidity.validity != 'success') {
-      sensorAngStdevHelpBlock = (<HelpBlock>
-                                     {sensorAngStdevValidity.msg}
+    var sensorAngVarHelpBlock = null;
+    var sensorAngVarValidity = this.getSensorAngVarValidationState(true);
+    if (sensorAngVarValidity.validity != 'success') {
+      sensorAngVarHelpBlock = (<HelpBlock>
+                                     {sensorAngVarValidity.msg}
                                  </HelpBlock>
       );
     }
@@ -307,9 +307,9 @@ export class RobotsApp extends React.Component {
                   <h5>Number of Particles:</h5> FastSLAM is O(mlog(n)) where m is the number of particles, and n the number of landmarks. While more particles cause better accuracy, in aggregate they are expensive, and you may get excellent results even with 5-10 particles! There is experimental support for viewing up to 10.
                   <p>
                   </p>
-                  <h5>Hypothetical sensor distance & angle standard deviations:</h5>
+                  <h5>Hypothetical sensor distance & angle variances:</h5>
                   <p>
-                      {"FastSLAM guesses the accuracy of its sensors. The real variances for a measurement from this robot's sensor are 0.001 distance units and 0.001 radians. Tuning the guesses may produce better results."}
+                      {"FastSLAM guesses the accuracy of its sensors. The real standard deviations for a measurement from this robot's sensor are 0.001 distance units and 0.001 radians (1/10th the odometry standard deviations). Tuning the guesses may produce better results."}
                   </p>
               </Modal.Body>
               <Modal.Footer>
@@ -332,17 +332,17 @@ export class RobotsApp extends React.Component {
                               <FormControl.Feedback />
                               {numParticlesHelpBlock}
                           </FormGroup>
-                          <FormGroup controlId="sensorDistStdevForm" validationState={this.getSensorDistStdevValidationState()}>
-                              <ControlLabel>Hypothetical sensor distance standard deviation</ControlLabel>
-                              <FormControl type="text" value={this.state.sensorDistStdev} placeholder={"Hypothetical variance (default: " + this.DEFAULT_DIST_STDEV + " units)"} onChange={this.handleSensorDistStdevChange} />
+                          <FormGroup controlId="sensorDistVarForm" validationState={this.getSensorDistVarValidationState()}>
+                              <ControlLabel>Hypothetical sensor distance variance</ControlLabel>
+                              <FormControl type="text" value={this.state.sensorDistVar} placeholder={"Hypothetical variance (default: " + this.DEFAULT_DIST_VAR + " units)"} onChange={this.handleSensorDistVarChange} />
                               <FormControl.Feedback />
-                              {sensorDistStdevHelpBlock}
+                              {sensorDistVarHelpBlock}
                           </FormGroup>
-                          <FormGroup controlId="sensorAngStdevForm" validationState={this.getSensorAngStdevValidationState()}>
-                              <ControlLabel>Hypothetical sensor angle standard deviation</ControlLabel>
-                              <FormControl type="text" value={this.state.sensorAngStdev} placeholder={"Hypothetical variance (default: " + this.DEFAULT_ANG_STDEV + " radians)"} onChange={this.handleSensorAngStdevChange} />
+                          <FormGroup controlId="sensorAngVarForm" validationState={this.getSensorAngVarValidationState()}>
+                              <ControlLabel>Hypothetical sensor angle variance</ControlLabel>
+                              <FormControl type="text" value={this.state.sensorAngVar} placeholder={"Hypothetical variance (default: " + this.DEFAULT_ANG_VAR + " radians)"} onChange={this.handleSensorAngVarChange} />
                               <FormControl.Feedback />
-                              {sensorAngStdevHelpBlock}
+                              {sensorAngVarHelpBlock}
                           </FormGroup>
                           <ButtonToolbar justified>
                               <ButtonGroup>
