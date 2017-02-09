@@ -42,8 +42,8 @@ class TopBar extends React.Component {
                   <LinkContainer to={"/robots"}>
                       <NavItem eventKey={2}>FastSLAM Demo</NavItem>
                   </LinkContainer>
-                  <LinkContainer to={"/employers"}>
-                      <NavItem eventKey={2} href="#">Employers</NavItem>
+                  <LinkContainer to={"/resume"}>
+                      <NavItem eventKey={2} href="#">Resume</NavItem>
                   </LinkContainer>
               </Nav>
               <Nav pullRight>
@@ -96,8 +96,8 @@ class Main extends React.Component {
     return (
       <Panel>
           <p>
-              <span>Employers, you can see <Link id="aboutLink" to="/about">my</Link> resume </span>
-              <Link id="resumeLink" to="/employers">here</Link>
+              <span>You can see <Link id="aboutLink" to="/about">my</Link> resume </span>
+              <Link id="resumeLink" to="/resume">here</Link>
           </p>
           <p>
               <span>If you want to see the source-code for this </span>
@@ -111,7 +111,7 @@ class Main extends React.Component {
   }
 }
 
-class Employers extends React.Component {
+class Resume extends React.Component {
   render() {
     return (
       <Grid>
@@ -134,7 +134,7 @@ class Employers extends React.Component {
       );
   }
 }
-Employers.defaultProps = {
+Resume.defaultProps = {
   resSrc: rotl33tStr("/choyvp/erf.cqs")
 }
 
@@ -177,7 +177,7 @@ class Root extends React.Component {
           <Route path="/" component={App}>
               <IndexRedirect to="/main" />
               <Route path="/main" component={MainGrid} />
-              <Route path="/employers" component={Employers} />
+              <Route path="/resume" component={Resume} />
               <Route path="/robots" component={Robots} />
               <Route path="/about" component={About} />
           </Route>
