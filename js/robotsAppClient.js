@@ -309,7 +309,7 @@ export class RobotsApp extends React.Component {
                   </p>
                   <h5>Hypothetical sensor distance & angle standard deviations:</h5>
                   <p>
-                      {"FastSLAM guesses the accuracy of its sensors. The real standard deviations for a measurement from this robot's sensor are σ = 0.001 distance units and σ = 0.001 radians. Tuning the guesses may produce better results."}
+                      {"FastSLAM guesses the accuracy of its sensors. The real variances for a measurement from this robot's sensor are 0.001 distance units and 0.001 radians. Tuning the guesses may produce better results."}
                   </p>
               </Modal.Body>
               <Modal.Footer>
@@ -334,13 +334,13 @@ export class RobotsApp extends React.Component {
                           </FormGroup>
                           <FormGroup controlId="sensorDistStdevForm" validationState={this.getSensorDistStdevValidationState()}>
                               <ControlLabel>Hypothetical sensor distance standard deviation</ControlLabel>
-                              <FormControl type="text" value={this.state.sensorDistStdev} placeholder={"Hypothetical σ (default: " + this.DEFAULT_DIST_STDEV + " units)"} onChange={this.handleSensorDistStdevChange} />
+                              <FormControl type="text" value={this.state.sensorDistStdev} placeholder={"Hypothetical variance (default: " + this.DEFAULT_DIST_STDEV + " units)"} onChange={this.handleSensorDistStdevChange} />
                               <FormControl.Feedback />
                               {sensorDistStdevHelpBlock}
                           </FormGroup>
                           <FormGroup controlId="sensorAngStdevForm" validationState={this.getSensorAngStdevValidationState()}>
                               <ControlLabel>Hypothetical sensor angle standard deviation</ControlLabel>
-                              <FormControl type="text" value={this.state.sensorAngStdev} placeholder={"Hypothetical σ (default: " + this.DEFAULT_ANG_STDEV + " radians)"} onChange={this.handleSensorAngStdevChange} />
+                              <FormControl type="text" value={this.state.sensorAngStdev} placeholder={"Hypothetical variance (default: " + this.DEFAULT_ANG_STDEV + " radians)"} onChange={this.handleSensorAngStdevChange} />
                               <FormControl.Feedback />
                               {sensorAngStdevHelpBlock}
                           </FormGroup>
@@ -497,11 +497,11 @@ class RMap extends React.Component {
     console.log("map initialized");
   }
 
-  // It is prohibitively slow to handle new map data by passing it as state
+  // It is prohibitively slow to handle new map data by passing it as changed state
   handleMapData(jsonData) {
 
     // Unmodifed Leaflet isn't really designed to render
-    // a large number of particles
+    // a large number of particles in realtime
     // TODO: use a more efficent Canvas, or WebGL, based renderer?
     this.timesHandledMapData++
     if (this.timesHandledMapData > 2000) {
