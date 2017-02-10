@@ -1,13 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Input, Button, Image, Jumbotron, Grid, Row, Col, Panel, LinkWithTooltip, Well } from 'react-bootstrap';
-import { Router, Route, Link, IndexRedirect, hashHistory } from 'react-router';
+import { Router, Route, IndexRedirect, hashHistory } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 import { ReactPDF } from './pdfViewer';
 import { rotl33tStr } from './util'
 import { About } from './about'
 import { Resume } from './resume'
 import { Robots } from './robots'
+import { Main } from './main'
 
 class App extends React.Component {
   render() {
@@ -85,26 +86,6 @@ class Jumbo extends React.Component {
           </p>
       </Jumbotron>
       );
-  }
-}
-
-class Main extends React.Component {
-  render() {
-    return (
-      <Panel>
-          <p>
-              <span>You can see <Link id="aboutLink" to="/about">my</Link> resume </span>
-              <Link id="resumeLink" to="/resume">here</Link>
-          </p>
-          <p>
-              <span>If you want to see the source-code for this </span>
-              <a id="webGitHubLink" href="https://github.com/jatjat/joelathiessen.ca">website</a>
-              <span>, or my </span>
-              <a id="fastSLAMGitHubLink" href="https://github.com/jatjat/kaly2">FastSLAM demo</a>
-              <span>, my GitHub is </span>
-              <a id="parentGitHubLink" href="https://github.com/jatjat">here.</a></p>
-      </Panel>
-    )
   }
 }
 
