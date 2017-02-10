@@ -8,6 +8,7 @@ export class RMap extends React.Component {
     this.handleMapData = ::this.handleMapData;
     this.resetMap = ::this.resetMap;
   }
+
   componentDidMount() {
     this.initialize();
     this.props.mapDataHandler(this.handleMapData);
@@ -16,6 +17,13 @@ export class RMap extends React.Component {
   componentWillUnmount() {
     this.map = null;
   }
+  
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.resetting == false && this.props.resetting == true) {
+      this.resetMap()
+    }
+  }
+
 
   resetMap() {
     this.map.off();
@@ -153,12 +161,6 @@ export class RMap extends React.Component {
     }
     this.oldBestY = bestY;
     this.oldBestX = bestX;
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.resetting == false && this.props.resetting == true) {
-      this.resetMap()
-    }
   }
 
   render() {
