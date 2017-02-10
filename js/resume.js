@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Grid, Row, Col, Panel, Well } from 'react-bootstrap';
-import { ReactPDF } from './pdfViewer';
+import { ReactPDF } from './pdfViewer/reactPDF';
 import { rotl33tStr } from './util'
 
 export class Resume extends React.Component {
