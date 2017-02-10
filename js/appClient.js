@@ -4,7 +4,7 @@ import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Input, Button, Image, Jumb
 import { Router, Route, Link, IndexRedirect, hashHistory } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 import { ReactPDF } from './pdfViewer';
-import { RobotsApp } from './robotsAppClient';
+import { RobotsApp } from './RobotsAppClient/robotsAppClient';
 import { rotl33tStr } from './util'
 
 class App extends React.Component {
