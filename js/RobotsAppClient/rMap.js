@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom'
 import Leaflet from 'leaflet';
 
 export class RMap extends React.Component {
+  static propTypes = {
+    mapDataHandler: React.PropTypes.func.isRequired,
+    resetting: React.PropTypes.bool.isRequired
+  }
+
   constructor(props) {
     super(props);
     this.handleMapData = ::this.handleMapData;
@@ -166,8 +171,4 @@ export class RMap extends React.Component {
   render() {
     return (<div className="map" />);
   }
-}
-RMap.propTypes = {
-  mapDataHandler: React.PropTypes.func.isRequired,
-  resetting: React.PropTypes.bool.isRequired
 }
