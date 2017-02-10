@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Input, Button, Image, Jumbotron, Grid, Row, Col, Panel, LinkWithTooltip, Well } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Input, Button, Image, Jumbotron, Panel, LinkWithTooltip, Well } from 'react-bootstrap';
 import { Router, Route, IndexRedirect, hashHistory } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 import { ReactPDF } from './pdfViewer';
@@ -8,8 +8,7 @@ import { rotl33tStr } from './util'
 import { About } from './about'
 import { Resume } from './resume'
 import { Robots } from './robots'
-import { Main } from './main'
-import { Jumbo } from './jumbo'
+import { MainGrid } from './mainGrid'
 
 class App extends React.Component {
   render() {
@@ -52,23 +51,6 @@ class TopBar extends React.Component {
               </Nav>
           </Navbar.Collapse>
       </Navbar>
-      );
-  }
-}
-
-class MainGrid extends React.Component {
-  render() {
-    return (
-      <Grid>
-          <Row>
-              <Col xs={12} md={9}>
-              <Jumbo />
-              </Col>
-              <Col xs={12} md={9}>
-              <Main />
-              </Col>
-          </Row>
-      </Grid>
       );
   }
 }
