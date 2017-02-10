@@ -10,19 +10,7 @@ import { Resume } from './resume'
 import { Robots } from './robots'
 import { MainGrid } from './mainGrid'
 import { TopBar } from './topBar'
-
-class App extends React.Component {
-  render() {
-    return (
-      <div>
-          <div>
-              <TopBar />
-          </div>
-          {this.props.children}
-      </div>
-      );
-  }
-}
+import { App } from './app'
 
 class Root extends React.Component {
   render() {
