@@ -9,6 +9,7 @@ import { About } from './about'
 import { Resume } from './resume'
 import { Robots } from './robots'
 import { Main } from './main'
+import { Jumbo } from './jumbo'
 
 class App extends React.Component {
   render() {
@@ -68,23 +69,6 @@ class MainGrid extends React.Component {
               </Col>
           </Row>
       </Grid>
-      );
-  }
-}
-
-class Jumbo extends React.Component {
-  render() {
-    return (
-      <Jumbotron>
-          <h1>Welcome!</h1>
-          <p>I, Joel Thiessen, am a software developer based near Winnipeg, Manitoba—and I enjoy creating things! You can check out one of my projects, a self-locating-robot simulation, right here.
-          </p>
-          <p>
-              <LinkContainer to={"/robots"}>
-                  <Button bsStyle="primary">Show me!</Button>
-              </LinkContainer>
-          </p>
-      </Jumbotron>
       );
   }
 }
