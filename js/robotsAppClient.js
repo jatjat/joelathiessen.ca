@@ -3,6 +3,7 @@ import { Button, ButtonGroup, ButtonToolbar, Glyphicon, Grid, Modal, Row, Col, P
 import IO from 'socket.io-client';
 import { CtrlForm } from './ctrlForm.js'
 import { RMap } from './rMap.js'
+import { StartButton } from './startButton.js'
 
 export class RobotsApp extends React.Component {
   constructor(props) {
@@ -179,32 +180,4 @@ export class RobotsApp extends React.Component {
 }
 RobotsApp.propTypes = {
   namespace: React.PropTypes.string.isRequired
-}
-
-class StartButton extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    var button;
-    if (this.props.running) {
-      button = (
-        <Button bsStyle="warning" onClick={this.props.onClick}>
-            <Glyphicon glyph="pause" /> Pause
-        </Button>
-      );
-    } else {
-      button = (
-        <Button bsStyle="success" onClick={this.props.onClick}>
-            <Glyphicon glyph="play" /> Start
-        </Button>
-      );
-    }
-    return button;
-  }
-}
-StartButton.propTypes = {
-  running: React.PropTypes.bool.isRequired,
-  onClick: React.PropTypes.func.isRequired
 }
