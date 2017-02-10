@@ -5,12 +5,7 @@ import { Router, Route, Link, IndexRedirect, hashHistory } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 import { ReactPDF } from './pdfViewer';
 import { RobotsApp } from './robotsAppClient';
-
-const rotl33tStr = (string) => {
-  return string.replace(/[A-Za-z]/g, (char) => {
-    return String.fromCharCode(char.charCodeAt(0) + (char.toUpperCase() <= "M" ? 13 : -13));
-  });
-}
+import { rotl33tStr } from './util'
 
 class App extends React.Component {
   render() {
@@ -112,6 +107,13 @@ class Main extends React.Component {
 }
 
 class Resume extends React.Component {
+  static defaultProps = {
+    resSrc: rotl33tStr("/choyvp/erf.cqs")
+  }
+  static propTypes = {
+    resSrc: React.PropTypes.string.isRequired
+  }
+
   render() {
     return (
       <Grid>
@@ -133,9 +135,6 @@ class Resume extends React.Component {
       </Grid>
       );
   }
-}
-Resume.defaultProps = {
-  resSrc: rotl33tStr("/choyvp/erf.cqs")
 }
 
 class Robots extends React.Component {
@@ -159,7 +158,7 @@ class About extends React.Component {
                   <Panel>
                       About this website: it's mostly for projects I think are cool, and my resume.
                       <br />
-                      <br /> About me: I enjoy reading, robotics, and creating things. 
+                      <br /> About me: I enjoy reading, robotics, and creating things.
                   </Panel>
                   </Col>
               </Panel>
