@@ -159,7 +159,7 @@ class About extends React.Component {
                   <Panel>
                       About this website: it's mostly for projects I think are cool, and my resume.
                       <br />
-                      <br /> About me: I enjoy reading and robotics. 
+                      <br /> About me: I enjoy reading, robotics, and creating things. 
                   </Panel>
                   </Col>
               </Panel>
