@@ -7,6 +7,7 @@ import { ReactPDF } from './pdfViewer';
 import { RobotsApp } from './RobotsAppClient/robotsAppClient';
 import { rotl33tStr } from './util'
 import { About } from './about'
+import { Resume } from './resume'
 
 class App extends React.Component {
   render() {
@@ -104,37 +105,6 @@ class Main extends React.Component {
               <a id="parentGitHubLink" href="https://github.com/jatjat">here.</a></p>
       </Panel>
     )
-  }
-}
-
-class Resume extends React.Component {
-  static defaultProps = {
-    resSrc: rotl33tStr("/choyvp/erf.cqs")
-  }
-  static propTypes = {
-    resSrc: React.PropTypes.string.isRequired
-  }
-
-  render() {
-    return (
-      <Grid>
-          <Row>
-              <Col xs={12} md={9}>
-              <Panel>
-                  <Col xs={12} md={9}> A viewable copy of my resume is included below <a id="resumeDownloadLink" href={this.props.resSrc} download="JoelThiessenResume.pdf">(direct link)</a>.
-                  <br />
-                  </Col>
-              </Panel>
-              <span></span>
-              <Well>
-                  <ReactPDF src={this.props.resSrc} />
-              </Well>
-              </Col>
-              <Col xs={12} md={9}>
-              </Col>
-          </Row>
-      </Grid>
-      );
   }
 }
 
