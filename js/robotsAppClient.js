@@ -30,7 +30,6 @@ export class RobotsApp extends React.Component {
     this.openHelpModal = ::this.openHelpModal;
     this.closeHelpModal = ::this.closeHelpModal;
     this.setHandleMapData = ::this.setHandleMapData;
-    this.setResetMap = ::this.setResetMap;
     this.handleStartButtonClick = ::this.handleStartButtonClick;
     this.handleApplyButtonClick = ::this.handleApplyButtonClick;
     this.handleResetButtonClick = ::this.handleResetButtonClick;
@@ -78,10 +77,6 @@ export class RobotsApp extends React.Component {
 
   setHandleMapData(handleMapData) {
     this.handleMapData = handleMapData;
-  }
-
-  setResetMap(resetMap) {
-    this.resetMap = resetMap
   }
 
   componentWillUnmount() {
@@ -257,7 +252,6 @@ export class RobotsApp extends React.Component {
           resetting: true
         }
       }
-      this.resetMap();
       this.setState({
         resetting: true
       })
@@ -320,7 +314,7 @@ export class RobotsApp extends React.Component {
               <Row>
                   <Col xs={12} md={8} mdPush={4}>
                   <Panel className="mapPanel">
-                      <RMap resetter={this.setResetMap} mapDataHandler={this.setHandleMapData} />
+                      <RMap resetting={this.state.resetting} mapDataHandler={this.setHandleMapData} />
                   </Panel>
                   </Col>
                   <Col xs={12} md={4} mdPull={8}>
@@ -418,7 +412,6 @@ class RMap extends React.Component {
   componentDidMount() {
     this.initialize();
     this.props.mapDataHandler(this.handleMapData);
-    this.props.resetter(this.resetMap);
   }
 
   componentWillUnmount() {
@@ -563,11 +556,17 @@ class RMap extends React.Component {
     this.oldBestX = bestX;
   }
 
+  componentDidUpdate(prevProps, prevState) {
+     if(prevProps.resetting == false && this.props.resetting == true) {
+        this.resetMap()
+     }
+  }
+
   render() {
     return (<div className="map" />);
   }
 }
 RMap.propTypes = {
   mapDataHandler: React.PropTypes.func.isRequired,
-  resetter: React.PropTypes.func.isRequired
+  resetting: React.PropTypes.bool.isRequired
 }
