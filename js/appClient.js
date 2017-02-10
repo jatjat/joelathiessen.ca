@@ -4,10 +4,10 @@ import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Input, Button, Image, Jumb
 import { Router, Route, Link, IndexRedirect, hashHistory } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 import { ReactPDF } from './pdfViewer';
-import { RobotsApp } from './RobotsAppClient/robotsAppClient';
 import { rotl33tStr } from './util'
 import { About } from './about'
 import { Resume } from './resume'
+import { Robots } from './robots'
 
 class App extends React.Component {
   render() {
@@ -105,12 +105,6 @@ class Main extends React.Component {
               <a id="parentGitHubLink" href="https://github.com/jatjat">here.</a></p>
       </Panel>
     )
-  }
-}
-
-class Robots extends React.Component {
-  render() {
-    return (<RobotsApp namespace="/" />);
   }
 }
 
