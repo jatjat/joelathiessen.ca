@@ -2,6 +2,11 @@ import React from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
 
 export class StartButton extends React.Component {
+  static propTypes = {
+    running: React.PropTypes.bool.isRequired,
+    onClick: React.PropTypes.func.isRequired
+  }
+
   constructor(props) {
     super(props);
   }
@@ -23,8 +28,4 @@ export class StartButton extends React.Component {
     }
     return button;
   }
-}
-StartButton.propTypes = {
-  running: React.PropTypes.bool.isRequired,
-  onClick: React.PropTypes.func.isRequired
 }
