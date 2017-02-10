@@ -1,15 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { MenuItem, Input, Button, Image, Jumbotron, Panel, LinkWithTooltip, Well } from 'react-bootstrap';
 import { Router, Route, IndexRedirect, hashHistory } from 'react-router';
-import { LinkContainer } from 'react-router-bootstrap';
-import { ReactPDF } from './pdfViewer';
-import { rotl33tStr } from './util'
 import { About } from './about'
 import { Resume } from './resume'
 import { Robots } from './robots'
 import { MainGrid } from './mainGrid'
-import { TopBar } from './topBar'
 import { App } from './app'
 
 class Root extends React.Component {
