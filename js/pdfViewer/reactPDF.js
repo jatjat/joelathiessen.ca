@@ -7,6 +7,13 @@ require("pdfjs-dist")
 require('pdfjs-dist/build/pdf.worker')
 
 export class PDF extends React.Component {
+  static propTypes = {
+    src: React.PropTypes.string.isRequired
+  }
+  static childContextTypes = {
+    pdf: React.PropTypes.object,
+    scale: React.PropTypes.number
+  }
   constructor(props) {
     super(props)
     this.state = {
@@ -34,16 +41,11 @@ export class PDF extends React.Component {
   }
 }
 
-PDF.propTypes = {
-  src: React.PropTypes.string.isRequired
-}
-
-PDF.childContextTypes = {
-  pdf: React.PropTypes.object,
-  scale: React.PropTypes.number
-}
-
 class Page extends React.Component {
+  static propTypes = {
+    index: React.PropTypes.number.isRequired
+  }
+  static contextTypes = PDF.childContextTypes
   constructor(props) {
     super(props)
     this.state = {
@@ -109,12 +111,9 @@ class Page extends React.Component {
   }
 }
 
-Page.propTypes = {
-  index: React.PropTypes.number.isRequired
-}
-Page.contextTypes = PDF.childContextTypes
 
 export class Viewer extends React.Component {
+  static contextTypes = PDF.childContextTypes
   render() {
     let {pdf} = this.context
     let numPages = pdf ? pdf.pdfInfo.numPages : 0
@@ -131,7 +130,6 @@ export class Viewer extends React.Component {
     )
   }
 }
-Viewer.contextTypes = PDF.childContextTypes
 
 export class ReactPDF extends React.Component {
   render() {
