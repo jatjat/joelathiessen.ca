@@ -1,4 +1,7 @@
 const NUM_PLACES = 2;
+var DEFAULT_WS_ADDR = 'ws://localhost:9000/api/ws/robot';
+var LOCALHOST_ADDR = 'http://localhost:8080/';
+
 var express = require('express');
 var path = require('path');
 var swig = require('swig');
@@ -17,7 +20,7 @@ var socketIoSession = require('socket.io-express-session');
 var WebSocket = require('ws');
 var IO = require('socket.io')
 
-var cdn = (process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:8080/');
+var cdn = (process.env.NODE_ENV === 'production' ? '/' : LOCALHOST_ADDR);
 swig.setDefaults({
   locals: {
     cdn: cdn
@@ -53,7 +56,7 @@ io.on('connection', (socket) => {
   var ses = socket.handshake.session;
 
   // for now, always get an unspecified robot:
-  ses.kalyClient = new WebSocket('ws://localhost:9000/api/ws/robot');
+  ses.kalyClient = new WebSocket(process.env.WS_ADDR || DEFAULT_WS_ADDR);
 
   ses.kalyClient.on('message', (data, flags) => {
     var lessPrecise = JSON.stringify(JSON.parse(data), (key, value) => {
