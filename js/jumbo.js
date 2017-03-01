@@ -7,7 +7,7 @@ export class Jumbo extends React.Component {
     return (
       <Jumbotron>
           <h1>Welcome!</h1>
-          <p>I, Joel Thiessen, am a software developer based near Winnipeg, Manitoba—and I enjoy creating things! You can check out one of my projects, a self-locating-robot simulation, right here.
+          <p>I, Joel Thiessen, am a software developer based near Winnipeg, Manitoba. You can check out one of my projects, a self-locating-robot simulation, right here.
           </p>
           <p>
               <LinkContainer to={"/robots"}>
