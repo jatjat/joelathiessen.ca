@@ -1,6 +1,7 @@
 const NUM_PLACES = 2;
 var DEFAULT_WS_ADDR = 'ws://localhost:9000/api/ws/robot';
 var LOCALHOST_ADDR = 'http://localhost:8080/';
+var KALY_PING_INTERVAL_MS = 5000;
 
 var express = require('express');
 var path = require('path');
@@ -54,6 +55,7 @@ var io = IO(server);
 io.use(socketIoSession(session));
 io.on('connection', (socket) => {
   var ses = socket.handshake.session;
+  var kalyClientAccessable = true;
 
   // for now, always get an unspecified robot:
   ses.kalyClient = new WebSocket(process.env.WS_ADDR || DEFAULT_WS_ADDR);
@@ -110,9 +112,19 @@ io.on('connection', (socket) => {
       }
     });
 
+    // ensure that websocket connection to kaly2 does not time out
+    var kalyPingInterval = setInterval(() => {
+      if (kalyClientAccessable === true) {
+        ses.kalyClient.ping();
+      }
+      else {
+        clearInterval(kalyPingInterval);
+      }
+    }, KALY_PING_INTERVAL_MS);
 
     console.log('client connected');
     socket.on('disconnect', () => {
+      kalyClientAccessable = false
       ses.kalyClient.close();
       console.log('client disconnected');
     });
