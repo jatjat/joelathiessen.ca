@@ -57,51 +57,65 @@ io.on('connection', (socket) => {
 
   // for now, always get an unspecified robot:
   ses.kalyClient = new WebSocket(process.env.WS_ADDR || DEFAULT_WS_ADDR);
+  ses.kalyClient.on('open', function open() {
 
-  ses.kalyClient.on('message', (data, flags) => {
-    var lessPrecise = JSON.stringify(JSON.parse(data), (key, value) => {
-      if (typeof value == "number") {
-        return parseFloat(value.toFixed(NUM_PLACES))
+    ses.kalyClient.on('message', (data, flags) => {
+      var lessPrecise = JSON.stringify(JSON.parse(data), (key, value) => {
+        if (typeof value == "number") {
+          return parseFloat(value.toFixed(NUM_PLACES))
+        }
+        return value;
+      });
+
+      if (lessPrecise["msgType"] === "slamSettings") {
+        console.log('sending slamSettings from kaly2 to client: ' + lessPrecise)
       }
-      return value;
+      socket.emit('message', lessPrecise);
     });
-    socket.emit('message', lessPrecise);
-  });
 
-  socket.on('message', (data, flags) => {
-    var validData = null;
+    socket.on('message', (data, flags) => {
+      console.log('server recieved from client: ' + JSON.stringify(data));
+      var validData = null;
 
-    // Modify incoming data so that something valid is always sent
-    // TODO: Validate using JSON schemas instead? 
-    if (data.msgType == "fastSlamSettings") {
-      validData = {
-        "msgType": "fastSlamSettings",
-        "msg": {
-          numParticles: Math.max(1, Math.min(100, data.msg.numParticles)),
-          sensorDistVar: Math.max(0, data.msg.sensorDistVar),
-          sensorAngVar: Math.max(0, data.msg.sensorAngVar)
+      // Modify incoming data so that something valid is always sent
+      // TODO: Validate using JSON schemas instead? 
+      if (data.msgType == "slamSettings") {
+        validData = {
+          "msgType": "slamSettings",
+          "msg": {
+            numParticles: Math.max(1, Math.min(100, data.msg.numParticles)),
+            sensorDistVar: Math.max(0, data.msg.sensorDistVar),
+            sensorAngVar: Math.max(0, data.msg.sensorAngVar),
+          }
+        }
+        if (data.msg.sessionID) {
+          validData.sessionID = Math.max(0, data.msg.sessionID)
+        }
+      } else if (data.msgType == "robotSessionSettings") {
+        validData = {
+          "msgType": "robotSessionSettings",
+          "msg": {
+            shouldRun: data.msg.shouldRun == true,
+            shouldReset: data.msg.shouldReset == true
+          }
+        }
+        if (data.msg.sessionID) {
+          validData.sessionID = Math.max(0, data.msg.sessionID)
         }
       }
-    } else if (data.msgType == "robotSettings") {
-      validData = {
-        "msgType": "robotSettings",
-        "msg": {
-          running: data.msg.running == true,
-          resetting: data.msg.resetting == true
-        }
+
+      if (validData != null) {
+        console.log('server sending to kaly2: ' + JSON.stringify(validData))
+        ses.kalyClient.send(JSON.stringify(validData));
       }
-    }
-
-    if (validData != null) {
-      ses.kalyClient.send(JSON.stringify(validData));
-    }
-  });
+    });
 
 
-  console.log('client connected');
-  socket.on('disconnect', () => {
-    ses.kalyClient.close();
-    console.log('client disconnected');
+    console.log('client connected');
+    socket.on('disconnect', () => {
+      ses.kalyClient.close();
+      console.log('client disconnected');
+    });
   });
 });
 

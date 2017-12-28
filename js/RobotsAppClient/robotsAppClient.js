@@ -34,12 +34,12 @@ export class RobotsApp extends React.Component {
       this.history += jsonData
 
       if (this.handleMapData != null) {
-        if (jsonData.msgType == "fastSlamInfo" && this.state.resetting == false) {
+        if (jsonData.msgType == "slamInfo" && this.state.resetting == false) {
           this.handleMapData(jsonData.msg);
-        } else if (jsonData.msgType == "robotSettings") {
+        } else if (jsonData.msgType == "robotSessionSettings") {
           this.setState({
-            isRunning: jsonData.msg.running,
-            resetting: jsonData.msg.resetting
+            isRunning: jsonData.msg.isRunning,
+            resetting: jsonData.msg.hasJustReset
           });
         }
       }
@@ -50,6 +50,15 @@ export class RobotsApp extends React.Component {
         connected: "connected",
       });
       console.log("connected");
+
+      var startMsg = {
+        msgType: "robotSessionSettings",
+        msg: {
+          shouldRun: true,
+          shouldReset: false
+        }
+      }
+      this.io.emit('message', startMsg)
     });
 
     this.io.on('disconnect', (data) => {
@@ -94,10 +103,10 @@ export class RobotsApp extends React.Component {
   handleStartButtonClick() {
     if (this.state.connected == "connected") {
       var startMsg = {
-        msgType: "robotSettings",
+        msgType: "robotSessionSettings",
         msg: {
-          running: !this.state.isRunning,
-          resetting: false
+          shouldRun: !this.state.isRunning,
+          shouldReset: false
         }
 
       }
@@ -108,10 +117,10 @@ export class RobotsApp extends React.Component {
   handleResetButtonClick() {
     if (this.state.connected == "connected") {
       var resetMsg = {
-        msgType: "robotSettings",
+        msgType: "robotSessionSettings",
         msg: {
-          running: this.state.isRunning,
-          resetting: true
+          shouldRun: this.state.isRunning,
+          shouldReset: true
         }
       }
       this.setState({

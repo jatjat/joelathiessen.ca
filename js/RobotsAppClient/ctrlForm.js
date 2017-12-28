@@ -59,7 +59,7 @@ export class CtrlForm extends React.Component {
       }
 
       var applyMsg = {
-        msgType: "fastSlamSettings",
+        msgType: "slamSettings",
         msg: {
           numParticles: nParticles,
           sensorDistVar: sDistVar,
