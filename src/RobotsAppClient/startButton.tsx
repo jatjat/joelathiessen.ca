@@ -1,11 +1,14 @@
 import React from 'react';
 import { Button, Glyphicon } from 'react-bootstrap';
 
-export class StartButton extends React.Component {
-  static propTypes = {
-    running: React.PropTypes.bool.isRequired,
-    onClick: React.PropTypes.func.isRequired
-  }
+type Props = {
+  running: boolean
+  onClick: (event: React.MouseEvent<Button>) => void
+}
+
+type State = {}
+
+export class StartButton extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);

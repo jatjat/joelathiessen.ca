@@ -42,7 +42,7 @@ app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-  res.render('index.html', {
+  res.render('../src/index.html', {
     cdn: cdn
   });
 });

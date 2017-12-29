@@ -15,7 +15,7 @@ export class TopBar extends React.Component {
               <Navbar.Toggle />
           </Navbar.Header>
           <Navbar.Collapse>
-              <Nav pullLeft>
+              <Nav>
                   <LinkContainer to={"/robots"}>
                       <NavItem eventKey={2}>FastSLAM Demo</NavItem>
                   </LinkContainer>

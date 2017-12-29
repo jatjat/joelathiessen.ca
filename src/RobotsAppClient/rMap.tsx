@@ -2,16 +2,37 @@ import React from 'react';
 import ReactDOM from 'react-dom'
 import Leaflet from 'leaflet';
 
-export class RMap extends React.Component {
-  static propTypes = {
-    mapDataHandler: React.PropTypes.func.isRequired,
-    resetting: React.PropTypes.bool.isRequired
-  }
+type Props = {
+  mapDataHandler: Function
+  resetting: boolean
+}
+
+type State = {
+
+}
+export class RMap extends React.Component<Props, State> {
+  private map = null;
+
+  private oldOdoX = null;
+  private oldOdoY = null;
+  private oldTrueY = null;
+  private oldTrueX = null;
+  private oldBestY = null;
+  private oldBestX = null;
+  private timesHandledMapData = 0;
+  private bestPath = null;
+  private odoPathLayerGroup = null;
+  private truePath = null;
+  private particles = null;
+  private landmarks = null;
+  private refreshStaticMapLayersRequested = true;
+  private overlayLayersControl = null;
+
 
   constructor(props) {
     super(props);
-    this.handleMapData = ::this.handleMapData;
-    this.resetMap = ::this.resetMap;
+    this.handleMapData = this.handleMapData.bind(this);
+    this.resetMap = this.resetMap.bind(this);
   }
 
   componentDidMount() {
@@ -28,7 +49,6 @@ export class RMap extends React.Component {
       this.resetMap()
     }
   }
-
 
   resetMap() {
     this.map.off();

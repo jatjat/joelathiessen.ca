@@ -4,12 +4,16 @@ import { Grid, Row, Col, Panel, Well } from 'react-bootstrap';
 import { ReactPDF } from './pdfViewer/reactPDF';
 import { rotl33tStr } from './util'
 
-export class Resume extends React.Component {
+type Props = {
+    resSrc: string
+}
+
+type State = {
+}
+
+export class Resume extends React.Component<Props, State> {
   static defaultProps = {
     resSrc: rotl33tStr("/choyvp/erf.cqs")
-  }
-  static propTypes = {
-    resSrc: React.PropTypes.string.isRequired
   }
 
   render() {

@@ -2,7 +2,24 @@ import React from 'react';
 import { Button, ButtonGroup, ButtonToolbar, ControlLabel, Glyphicon, FormGroup, FormControl, HelpBlock} from 'react-bootstrap';
 import Validator from 'validator';
 
-export class CtrlForm extends React.Component {
+type Props = {
+  connected: string
+  openHelpModal
+  onCtrlMsg: Function
+}
+
+type State = {
+  numParticles: string
+  sensorDistVar: string
+  sensorAngVar: string
+}
+
+export class CtrlForm extends React.Component<Props, State> {
+  private MAX_PARTICLES = 100;
+  private DEFAULT_NUM_PARTICLES = 20;
+  private DEFAULT_DIST_VAR = 0.5;
+  private DEFAULT_ANG_VAR = 0.01;
+
   constructor(props) {
     super(props)
     this.state = {
@@ -10,15 +27,11 @@ export class CtrlForm extends React.Component {
       sensorDistVar: "",
       sensorAngVar: ""
     }
-    this.MAX_PARTICLES = 100;
-    this.DEFAULT_NUM_PARTICLES = 20;
-    this.DEFAULT_DIST_VAR = 0.5;
-    this.DEFAULT_ANG_VAR = 0.01;
 
-    this.handleNumParticlesChange = ::this.handleNumParticlesChange;
-    this.handleSensorDistVarChange = ::this.handleSensorDistVarChange;
-    this.handleSensorAngVarChange = ::this.handleSensorAngVarChange;
-    this.handleApplyButtonClick = ::this.handleApplyButtonClick;
+    this.handleNumParticlesChange = this.handleNumParticlesChange.bind(this);
+    this.handleSensorDistVarChange = this.handleSensorDistVarChange.bind(this);
+    this.handleSensorAngVarChange = this.handleSensorAngVarChange.bind(this);
+    this.handleApplyButtonClick = this.handleApplyButtonClick.bind(this);
   }
 
   handleNumParticlesChange(e) {
@@ -41,9 +54,9 @@ export class CtrlForm extends React.Component {
 
   handleApplyButtonClick() {
     if (this.props.connected == "connected"
-      && this.getNumParticlesValidationState() != 'error'
-      && this.getSensorAngVarValidationState() != 'error'
-      && this.getSensorDistVarValidationState() != 'error') {
+      && this.getNumParticlesValidationState(undefined) != 'error'
+      && this.getSensorAngVarValidationState(undefined) != 'error'
+      && this.getSensorDistVarValidationState(undefined) != 'error') {
 
       var nParticles = this.DEFAULT_NUM_PARTICLES;
       if (this.state.numParticles != "") {
@@ -179,19 +192,19 @@ export class CtrlForm extends React.Component {
     }
     return (
       <form>
-          <FormGroup controlId="numParticlesForm" validationState={this.getNumParticlesValidationState()}>
+          <FormGroup controlId="numParticlesForm" validationState={this.getNumParticlesValidationState(undefined)}>
               <ControlLabel>Number of Particles</ControlLabel>
               <FormControl type="text" value={this.state.numParticles} placeholder={"Number of particles (1-" + this.MAX_PARTICLES + "), default: " + this.DEFAULT_NUM_PARTICLES + ")"} onChange={this.handleNumParticlesChange} />
               <FormControl.Feedback />
               {numParticlesHelpBlock}
           </FormGroup>
-          <FormGroup controlId="sensorDistVarForm" validationState={this.getSensorDistVarValidationState()}>
+          <FormGroup controlId="sensorDistVarForm" validationState={this.getSensorDistVarValidationState(undefined)}>
               <ControlLabel>Hypothetical sensor distance variance</ControlLabel>
               <FormControl type="text" value={this.state.sensorDistVar} placeholder={"Hypothetical variance (default: " + this.DEFAULT_DIST_VAR + " units)"} onChange={this.handleSensorDistVarChange} />
               <FormControl.Feedback />
               {sensorDistVarHelpBlock}
           </FormGroup>
-          <FormGroup controlId="sensorAngVarForm" validationState={this.getSensorAngVarValidationState()}>
+          <FormGroup controlId="sensorAngVarForm" validationState={this.getSensorAngVarValidationState(undefined)}>
               <ControlLabel>Hypothetical sensor angle variance</ControlLabel>
               <FormControl type="text" value={this.state.sensorAngVar} placeholder={"Hypothetical variance (default: " + this.DEFAULT_ANG_VAR + " radians)"} onChange={this.handleSensorAngVarChange} />
               <FormControl.Feedback />

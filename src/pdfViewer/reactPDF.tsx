@@ -1,24 +1,32 @@
 // There doesn't seem to be a simultaneous multipage PDF.js React component on NPM
-// and the React component wrappers for PDF.js on NPM are trivial.
-// From http://codepen.io/akfish/pen/LNWXrMs
+// Originally from http://codepen.io/akfish/pen/LNWXrMs
 
 import React from 'react';
-require("pdfjs-dist")
-require('pdfjs-dist/build/pdf.worker')
+import PDFJS from "pdfjs-dist"
+import 'pdfjs-dist/build/pdf.worker'
 
-export class PDF extends React.Component {
-  static propTypes = {
-    src: React.PropTypes.string.isRequired
-  }
+type PDFProps = {
+  src: string
+}
+
+type PDFState = {
+  pdf: any
+  scale: Number
+  status: string
+}
+
+export class PDF extends React.Component<PDFProps, PDFState> {
   static childContextTypes = {
     pdf: React.PropTypes.object,
     scale: React.PropTypes.number
   }
+  
   constructor(props) {
     super(props)
     this.state = {
       pdf: null,
-      scale: 1.2
+      scale: 1.2,
+      status: ''
     }
   }
   getChildContext() {
@@ -41,10 +49,18 @@ export class PDF extends React.Component {
   }
 }
 
-class Page extends React.Component {
-  static propTypes = {
-    index: React.PropTypes.number.isRequired
-  }
+type PageProps = {
+  index: number
+}
+
+type PageState = {
+  status: string
+  page: any
+  width: number
+  height: number
+}
+
+export class Page extends React.Component<PageProps, PageState> {
   static contextTypes = PDF.childContextTypes
   constructor(props) {
     super(props)
@@ -84,7 +100,7 @@ class Page extends React.Component {
     let {scale} = this.context
     let viewport = page.getViewport(scale)
     let {width, height} = viewport
-    let canvas = this.refs.canvas
+    let canvas = this.refs.canvas as any
     let context = canvas.getContext('2d')
     canvas.width = width
     canvas.height = height
@@ -131,7 +147,14 @@ export class Viewer extends React.Component {
   }
 }
 
-export class ReactPDF extends React.Component {
+type ReactPDFProps = {
+  src: string
+}
+
+type ReactPDFState = {
+}
+
+export class ReactPDF extends React.Component<ReactPDFProps, ReactPDFState> {
   render() {
     return (
       <PDF src={this.props.src}>

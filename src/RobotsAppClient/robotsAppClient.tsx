@@ -1,11 +1,23 @@
 import React from 'react';
 import { Button, ButtonGroup, ButtonToolbar, Glyphicon, Grid, Modal, Row, Col, Panel } from 'react-bootstrap';
 import IO from 'socket.io-client';
-import { CtrlForm } from './ctrlForm.js'
-import { RMap } from './rMap.js'
-import { StartButton } from './startButton.js'
+import { CtrlForm } from './ctrlForm'
+import { RMap } from './rMap'
+import { StartButton } from './startButton'
 
-export class RobotsApp extends React.Component {
+type Props = { namespace: string };
+type State = { 
+  connected: string,
+  showHelpModal: boolean,
+  isRunning: true,
+  resetting: boolean
+}
+
+export class RobotsApp extends React.Component<Props, State>  {
+  private handleMapData = null;
+  private history = [];
+  private io = null;
+
   constructor(props) {
     super(props)
     this.state = {
@@ -14,17 +26,15 @@ export class RobotsApp extends React.Component {
       isRunning: true, // to prevent StartButton from flashing on page load
       resetting: false
     }
-    this.handleMapData = null;
-    this.history = [];
 
-    this.openHelpModal = ::this.openHelpModal;
-    this.closeHelpModal = ::this.closeHelpModal;
-    this.setHandleMapData = ::this.setHandleMapData;
+    this.openHelpModal = this.openHelpModal.bind(this);
+    this.closeHelpModal = this.closeHelpModal.bind(this);
+    this.setHandleMapData = this.setHandleMapData.bind(this);
 
-    this.handleStartButtonClick = ::this.handleStartButtonClick;
-    this.handleResetButtonClick = ::this.handleResetButtonClick;
+    this.handleStartButtonClick = this.handleStartButtonClick.bind(this);
+    this.handleResetButtonClick = this.handleResetButtonClick.bind(this);
 
-    this.onCtrlMsg = ::this.onCtrlMsg
+    this.onCtrlMsg = this.onCtrlMsg.bind(this)
 
     this.io = IO(this.props.namespace, {
       reconnect: true,
@@ -186,7 +196,4 @@ export class RobotsApp extends React.Component {
       </div>
       );
   }
-}
-RobotsApp.propTypes = {
-  namespace: React.PropTypes.string.isRequired
 }
