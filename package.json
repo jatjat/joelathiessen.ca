@@ -4,11 +4,10 @@
   "description": "Joel Thiessen's Website",
   "main": "index.js",
   "scripts": {
-    "start2": "webpack-dev-server -w --config webpack/webpack.config.js",
     "start": "nodemon app.js -p 3000",
     "start:prod": "NODE_ENV=production nodemon app.js -p 3000",
     "build": "NODE_ENV=production webpack -p --progress --colors",
-    "watch": "webpack-dev-server --inline --hot --progress --colors"
+    "watch": "webpack-dev-server -w --inline --hot --progress --colors --config webpack/webpack.config.js"
   },
   "author": "Joel Thiessen",
   "license": "ISC",
