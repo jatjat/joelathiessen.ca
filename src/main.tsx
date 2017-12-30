@@ -1,6 +1,6 @@
 import React from 'react';
 import { Panel } from 'react-bootstrap';
-import { Link } from 'react-router';
+import { Link } from "react-router-dom";
 
 export class Main extends React.Component {
   render() {

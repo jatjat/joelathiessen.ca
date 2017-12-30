@@ -40,6 +40,7 @@ app.set('view engine', 'html');
 app.use('/img', express.static(path.join(__dirname, 'img')));
 app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use("/", express.static(path.join(__dirname, "dist")));
 
 app.get('/', (req, res) => {
   res.render('../src/index.html', {

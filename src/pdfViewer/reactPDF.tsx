@@ -1,9 +1,9 @@
 // There doesn't seem to be a simultaneous multipage PDF.js React component on NPM
 // Originally from http://codepen.io/akfish/pen/LNWXrMs
 
-import React from 'react';
-import PDFJS from "pdfjs-dist"
-import 'pdfjs-dist/build/pdf.worker'
+import React from "react";
+import PDFJS from "pdfjs-dist/webpack";
+import PropTypes from "prop-types";
 
 type PDFProps = {
   src: string
@@ -17,10 +17,10 @@ type PDFState = {
 
 export class PDF extends React.Component<PDFProps, PDFState> {
   static childContextTypes = {
-    pdf: React.PropTypes.object,
-    scale: React.PropTypes.number
-  }
-  
+    pdf: PropTypes.object,
+    scale: PropTypes.number
+  };
+
   constructor(props) {
     super(props)
     this.state = {
@@ -75,7 +75,9 @@ export class Page extends React.Component<PageProps, PageState> {
     return this.context.pdf != nextContext.pdf || this.state.status !== nextState.status
   }
   componentDidUpdate(nextProps, nextState, nextContext) {
-    this._update(nextContext.pdf)
+    if (nextContext) {
+      this._update(nextContext.pdf);
+    }
   }
   componentDidMount() {
     this._update(this.context.pdf)
