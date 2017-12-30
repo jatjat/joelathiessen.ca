@@ -1,6 +1,7 @@
 /* Modified from http://codepen.io/akfish/pen/LNWXrM */
 
-.pdf-context, .pdf-viewer {
+.pdf-context,
+.pdf-viewer {
   position: relative;
   width: 100%;
   overflow: auto;

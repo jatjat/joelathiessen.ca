@@ -5,16 +5,16 @@
  */
 
 .leaflet-container {
-    height: 50vh;
+  height: 50vh;
 }
 
-@media(min-width:34em){
-    .leaflet-container {
-        height: 80vh;
-        /* height: 100% never produces a working map.
+@media (min-width: 34em) {
+  .leaflet-container {
+    height: 80vh;
+    /* height: 100% never produces a working map.
          * From what I could see online, and by
          * experimentation, it seems to be a 
          * react-bootstrap leaflet specific limitation.
          */
-    }
+  }
 }

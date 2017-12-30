@@ -1,15 +1,14 @@
-import React from 'react';
-import { Button, Glyphicon } from 'react-bootstrap';
+import React from "react";
+import { Button, Glyphicon } from "react-bootstrap";
 
 type Props = {
-  running: boolean
-  onClick: (event: React.MouseEvent<Button>) => void
-}
+  running: boolean;
+  onClick: (event: React.MouseEvent<Button>) => void;
+};
 
-type State = {}
+type State = {};
 
 export class StartButton extends React.Component<Props, State> {
-
   constructor(props) {
     super(props);
   }
@@ -19,13 +18,13 @@ export class StartButton extends React.Component<Props, State> {
     if (this.props.running) {
       button = (
         <Button bsStyle="warning" onClick={this.props.onClick}>
-            <Glyphicon glyph="pause" /> Pause
+          <Glyphicon glyph="pause" /> Pause
         </Button>
       );
     } else {
       button = (
         <Button bsStyle="success" onClick={this.props.onClick}>
-            <Glyphicon glyph="play" /> Start
+          <Glyphicon glyph="play" /> Start
         </Button>
       );
     }

@@ -1,15 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom'
-import Leaflet from 'leaflet';
+import React from "react";
+import ReactDOM from "react-dom";
+import Leaflet from "leaflet";
 
 type Props = {
-  mapDataHandler: Function
-  resetting: boolean
-}
+  mapDataHandler: Function;
+  resetting: boolean;
+};
 
-type State = {
-
-}
+type State = {};
 export class RMap extends React.Component<Props, State> {
   private map = null;
 
@@ -28,7 +26,6 @@ export class RMap extends React.Component<Props, State> {
   private refreshStaticMapLayersRequested = true;
   private overlayLayersControl = null;
 
-
   constructor(props) {
     super(props);
     this.handleMapData = this.handleMapData.bind(this);
@@ -43,10 +40,10 @@ export class RMap extends React.Component<Props, State> {
   componentWillUnmount() {
     this.map = null;
   }
-  
+
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.resetting == false && this.props.resetting == true) {
-      this.resetMap()
+      this.resetMap();
     }
   }
 
@@ -68,7 +65,7 @@ export class RMap extends React.Component<Props, State> {
     this.map = Leaflet.map(ReactDOM.findDOMNode(this), {
       crs: Leaflet.CRS.Simple,
       preferCanvas: true,
-      minZoom: 0,
+      minZoom: 0
     });
     this.map.fitBounds(startBounds);
     this.bestPath = Leaflet.geoJSON(null, {
@@ -100,14 +97,14 @@ export class RMap extends React.Component<Props, State> {
       "Odometric Path": this.odoPathLayerGroup,
       "True Path": this.truePath,
       "Particles (experimental!)": this.particles,
-      "Landmarks": this.landmarks
+      Landmarks: this.landmarks
     };
 
     // Leaflet will stop displaying new data after a
     // reconnection unless its layers are reset
     if (this.overlayLayersControl != null) {
       this.map.removeControl(this.overlayLayersControl);
-      this.map.eachLayer((layer) => {
+      this.map.eachLayer(layer => {
         this.map.removeLayer(layer);
       });
     }
@@ -124,33 +121,36 @@ export class RMap extends React.Component<Props, State> {
 
   // It is prohibitively expensive to handle new map data by passing it as new props
   handleMapData(jsonData) {
-
     // Unmodifed Leaflet isn't really designed to render
     // a large number of particles in realtime
     // TODO: use a more efficent Canvas, or WebGL, based renderer?
-    this.timesHandledMapData++
+    this.timesHandledMapData++;
     if (this.timesHandledMapData > 2000) {
       this.map.removeLayer(this.particles);
     }
 
     if (this.refreshStaticMapLayersRequested) {
-      jsonData.trueLandmarks.map((pnt) => {
-        this.landmarks.addLayer(Leaflet.circleMarker([pnt.x, pnt.y], {
-          radius: 5,
-          fillColor: "green",
-          fillOpacity: 1,
-          stroke: false
-        }));
+      jsonData.trueLandmarks.map(pnt => {
+        this.landmarks.addLayer(
+          Leaflet.circleMarker([pnt.x, pnt.y], {
+            radius: 5,
+            fillColor: "green",
+            fillOpacity: 1,
+            stroke: false
+          })
+        );
       });
       this.refreshStaticMapLayersRequested = false;
     }
 
-    var particleLayersList = jsonData.particles.slice(0, Math.min(jsonData.particles.length, 10)).map((pnt) => {
-      return Leaflet.circleMarker([pnt.x, pnt.y], {
-        radius: 1,
-        opacity: 0.1
+    var particleLayersList = jsonData.particles
+      .slice(0, Math.min(jsonData.particles.length, 10))
+      .map(pnt => {
+        return Leaflet.circleMarker([pnt.x, pnt.y], {
+          radius: 1,
+          opacity: 0.1
+        });
       });
-    });
     var newParticlesLayerGroup = Leaflet.layerGroup(particleLayersList);
     this.particles.addLayer(newParticlesLayerGroup);
 
@@ -189,6 +189,6 @@ export class RMap extends React.Component<Props, State> {
   }
 
   render() {
-    return (<div className="map" />);
+    return <div className="map" />;
   }
 }
