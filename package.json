@@ -6,10 +6,9 @@
   "scripts": {
     "start": "nodemon app.js -p 3000",
     "start:prod": "NODE_ENV=production nodemon app.js -p 3000",
-    "build":
-      "NODE_ENV=production webpack --progress --colors --config webpack/webpack.config.js",
+    "build": "webpack --config webpack/webpack.prod.js",
     "watch":
-      "webpack-dev-server -w --inline --hot --progress --colors --config webpack/webpack.config.js"
+      "webpack-dev-server -w --inline --hot --progress --colors --config webpack/webpack.dev.js"
   },
   "author": "Joel Thiessen",
   "license": "ISC",
@@ -55,6 +54,7 @@
     "swig": "^1.4.2",
     "url-loader": "^0.6.2",
     "validator": "^9.2.0",
+    "webpack-merge": "^4.1.1",
     "ws": "^3.3.3"
   }
 }

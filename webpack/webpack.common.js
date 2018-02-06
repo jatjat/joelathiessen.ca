@@ -8,15 +8,9 @@ module.exports = {
     path: path.join(__dirname, "../dist/"),
     filename: "[name].bundle.js"
   },
-  watch: true,
   resolve: {
     extensions: [".ts", ".tsx", ".js"]
   },
-  devServer: {
-    contentBase: path.join(__dirname, "../dist/"),
-    port: 8080
-  },
-  devtool: "inline-source-map",
   module: {
     loaders: [
       { test: /.tsx?$/, use: ["awesome-typescript-loader"] },
