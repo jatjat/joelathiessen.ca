@@ -16,7 +16,7 @@ export class About extends React.Component {
                 />
               </Col>
               <span />
-              <Col xs={4} md={8}>
+              <Col xs={8} md={8}>
                 <Panel>
                   About this website: it's mostly for projects I think are cool,
                   and my resume.
