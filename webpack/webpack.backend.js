@@ -17,10 +17,10 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".tsx"],
-    modules: ["./node_modules", "node_modules"]
+    modules: ["../node_modules", "node_modules"]
   },
   module: {
-    loaders: [{ test: /.tsx?$/, use: ["awesome-typescript-loader"] }]
+    rules: [{ test: /.tsx?$/, use: ["awesome-typescript-loader"] }]
   },
   devtool: "inline-source-map",
   plugins: [new WriteFilePlugin()]

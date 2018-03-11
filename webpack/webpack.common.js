@@ -12,7 +12,7 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js"]
   },
   module: {
-    loaders: [
+    rules: [
       { test: /.tsx?$/, use: ["awesome-typescript-loader"] },
       { test: /.html$/, use: "raw-loader" },
       { test: /\.json$/, use: "json-loader" },

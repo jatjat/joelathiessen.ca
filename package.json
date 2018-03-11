@@ -7,17 +7,17 @@
     "start": "nodemon dist/backend.bundle.js -p 3000",
     "start:prod": "NODE_ENV=production PORT=80 nodemon dist/backend.bundle.js",
     "build":
-      "webpack --config webpack/webpack.backend.js && webpack --config webpack/webpack.prod.js",
+      "webpack --mode production --config webpack/webpack.backend.js && webpack --mode production --config webpack/webpack.prod.js",
     "watch":
-      "webpack-dev-server -w --inline --hot --port 8080 --progress --colors --config webpack/webpack.dev.js",
+      "webpack-dev-server -w --mode development --inline --hot --port 8080 --progress --colors --config webpack/webpack.dev.js",
     "watch-server":
-      "webpack --watch --config webpack/webpack.backend.js # run separately to avoid webpack-dev-server bug"
+      "webpack --watch --mode development --config webpack/webpack.backend.js # run separately to avoid webpack-dev-server bug"
   },
   "author": "Joel Thiessen",
   "license": "ISC",
   "devDependencies": {
     "@types/react-router": "^4.0.20",
-    "awesome-typescript-loader": "^3.4.1",
+    "awesome-typescript-loader": "^5.0.0",
     "copy-webpack-plugin": "^4.3.1",
     "nodemon": "^1.14.6",
     "npm-check-updates": "^2.14.0",
@@ -25,8 +25,9 @@
     "source-map-loader": "^0.2.3",
     "typescript": "^2.6.2",
     "uglifyjs-webpack-plugin": "^1.1.5",
-    "webpack": "^3.0.0",
-    "webpack-dev-server": "^2.9.7",
+    "webpack": "^4.0.0",
+    "webpack-cli": "^2.0.11",
+    "webpack-dev-server": "^3.1.1",
     "webpack-node-externals": "^1.6.0",
     "write-file-webpack-plugin": "^4.2.0"
   },
