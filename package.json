@@ -4,11 +4,14 @@
   "description": "Joel Thiessen's Website",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js -p 3000",
-    "start:prod": "NODE_ENV=production PORT=80 nodemon app.js",
-    "build": "webpack --config webpack/webpack.prod.js",
+    "start": "nodemon dist/backend.bundle.js -p 3000",
+    "start:prod": "NODE_ENV=production PORT=80 nodemon dist/backend.bundle.js",
+    "build":
+      "webpack --config webpack/webpack.backend.js && webpack --config webpack/webpack.prod.js",
     "watch":
-      "webpack-dev-server -w --inline --hot --progress --colors --config webpack/webpack.dev.js"
+      "webpack-dev-server -w --inline --hot --port 8080 --progress --colors --config webpack/webpack.dev.js",
+    "watch-server":
+      "webpack --watch --config webpack/webpack.backend.js # run separately to avoid webpack-dev-server bug"
   },
   "author": "Joel Thiessen",
   "license": "ISC",
@@ -23,7 +26,9 @@
     "typescript": "^2.6.2",
     "uglifyjs-webpack-plugin": "^1.1.5",
     "webpack": "^3.0.0",
-    "webpack-dev-server": "^2.9.7"
+    "webpack-dev-server": "^2.9.7",
+    "webpack-node-externals": "^1.6.0",
+    "write-file-webpack-plugin": "^4.2.0"
   },
   "dependencies": {
     "@types/react": "^16.0.31",
