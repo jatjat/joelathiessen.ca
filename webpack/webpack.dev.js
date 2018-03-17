@@ -4,7 +4,7 @@ const WriteFilePlugin = require("write-file-webpack-plugin");
 
 module.exports = merge(common, {
   devServer: {
-    contentBase: "../dist/",
+    contentBase: "./",
     port: 8080
   },
   watch: true,

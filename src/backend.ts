@@ -1,33 +1,36 @@
-var NUM_PLACES = 2;
-var DEFAULT_WS_ADDR = "ws://localhost:9000/api/ws/robot";
-var LOCALHOST_ADDR = "http://localhost:8080/";
-var KALY_PING_INTERVAL_MS = 5000;
+import express from "express";
+import path from "path";
+import swig from "swig";
+import compression from "compression";
+import expressSession from "express-session";
+import sessionFileStore from "session-file-store";
+import socketIoSession from "socket.io-express-session";
+import WebSocket from "ws";
+import IO from "socket.io";
 
-var express = require("express");
-var path = require("path");
-var swig = require("swig");
-var compression = require("compression");
-var expressSession = require("express-session");
-var sessionStore = require("session-file-store")(expressSession);
-var session = expressSession({
-  store: sessionStore({
+const NUM_PLACES = 2;
+const DEFAULT_WS_ADDR = "ws://localhost:9000/api/ws/robot";
+const LOCALHOST_ADDR = "http://localhost:8080/";
+const KALY_PING_INTERVAL_MS = 5000;
+
+const SessionStore = sessionFileStore(expressSession);
+
+const session = expressSession({
+  store: new SessionStore({
     path: __dirname + "/tmp/sessions"
   }),
   secret: process.env.SES_SECRET || "devSecret",
   saveUninitialized: true,
   resave: true
 });
-var socketIoSession = require("socket.io-express-session");
-var WS = require("ws");
-var IO = require("socket.io");
 
-var cdn = process.env.NODE_ENV === "production" ? "/" : LOCALHOST_ADDR;
+const cdn = process.env.NODE_ENV === "production" ? "/" : LOCALHOST_ADDR;
 swig.setDefaults({
   locals: {
     cdn: cdn
   }
 });
-var app = express();
+const app = express();
 
 app.use(
   compression({
@@ -49,26 +52,28 @@ app.get("/", (req, res) => {
   });
 });
 
-var server = app.listen(process.env.PORT || 3000, () => {
+const server = app.listen(process.env.PORT || 3000, () => {
   console.log("Express server listening on port " + server.address().port);
 });
 
-var io = IO(server);
+const io = IO(server);
 io.use(socketIoSession(session));
 io.on("connection", socket => {
-  var ses = socket.handshake.session;
   var kalyClientAccessable = true;
 
   // for now, always get an unspecified robot:
-  ses.kalyClient = new WS(process.env.WS_ADDR || DEFAULT_WS_ADDR);
-  ses.kalyClient.on("open", function open() {
-    ses.kalyClient.on("message", (data, flags) => {
-      var lessPrecise = JSON.stringify(JSON.parse(data), (key, value) => {
-        if (typeof value == "number") {
-          return parseFloat(value.toFixed(NUM_PLACES));
+  const kalyClient = new WebSocket(process.env.WS_ADDR || DEFAULT_WS_ADDR);
+  kalyClient.on("open", function open() {
+    kalyClient.on("message", (data: any, flags: any) => {
+      const lessPrecise: any = JSON.stringify(
+        JSON.parse(data),
+        (key, value) => {
+          if (typeof value == "number") {
+            return parseFloat(value.toFixed(NUM_PLACES));
+          }
+          return value;
         }
-        return value;
-      });
+      );
 
       if (lessPrecise["msgType"] === "slamSettings") {
         console.log(
@@ -80,7 +85,11 @@ io.on("connection", socket => {
 
     socket.on("message", (data, flags) => {
       console.log("server recieved from client: " + JSON.stringify(data));
-      var validData = null;
+      var validData: {
+        msgType: String;
+        sessionID?: number;
+        msg: {};
+      } = null;
 
       // Modify incoming data so that something valid is always sent
       // TODO: Validate using JSON schemas instead?
@@ -89,8 +98,8 @@ io.on("connection", socket => {
           msgType: "slamSettings",
           msg: {
             numParticles: Math.max(1, Math.min(100, data.msg.numParticles)),
-            sensorDistVar: Math.max(0, data.msg.sensorDistVar),
-            sensorAngVar: Math.max(0, data.msg.sensorAngVar)
+            sensorDistconst: Math.max(0, data.msg.sensorDistconst),
+            sensorAngconst: Math.max(0, data.msg.sensorAngconst)
           }
         };
         if (data.msg.sessionID) {
@@ -111,14 +120,14 @@ io.on("connection", socket => {
 
       if (validData != null) {
         console.log("server sending to kaly2: " + JSON.stringify(validData));
-        ses.kalyClient.send(JSON.stringify(validData));
+        kalyClient.send(JSON.stringify(validData));
       }
     });
 
     // ensure that websocket connection to kaly2 does not time out
-    var kalyPingInterval = setInterval(() => {
+    const kalyPingInterval = setInterval(() => {
       if (kalyClientAccessable === true) {
-        ses.kalyClient.ping();
+        kalyClient.ping();
       } else {
         clearInterval(kalyPingInterval);
       }
@@ -127,12 +136,12 @@ io.on("connection", socket => {
     console.log("client connected");
     socket.on("disconnect", () => {
       kalyClientAccessable = false;
-      ses.kalyClient.close();
+      kalyClient.close();
       console.log("client disconnected");
     });
   });
 });
 
-function shouldCompress(req, res) {
+function shouldCompress(req: any, res: any) {
   return req.headers["x-no-compression"] ? false : compression.filter(req, res);
 }
