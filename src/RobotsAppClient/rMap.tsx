@@ -54,6 +54,8 @@ export class RMap extends React.Component<Props, State> {
   }
 
   initialize() {
+    const startBounds = [[90, 150], [230, 470]];
+
     this.oldOdoX = null;
     this.oldOdoY = null;
     this.oldTrueY = null;
@@ -61,7 +63,6 @@ export class RMap extends React.Component<Props, State> {
     this.oldBestY = null;
     this.oldBestX = null;
     this.timesHandledMapData = 0;
-    const startBounds = [[90, 150], [230, 470]];
     this.map = Leaflet.map(ReactDOM.findDOMNode(this), {
       crs: Leaflet.CRS.Simple,
       preferCanvas: true,
@@ -92,7 +93,7 @@ export class RMap extends React.Component<Props, State> {
     this.particles = Leaflet.layerGroup([]);
     this.landmarks = Leaflet.layerGroup([]);
     this.refreshStaticMapLayersRequested = true;
-    var overlayLayers = {
+    const overlayLayers = {
       "FastSLAM Path": this.bestPath,
       "Odometric Path": this.odoPathLayerGroup,
       "True Path": this.truePath,
@@ -143,7 +144,7 @@ export class RMap extends React.Component<Props, State> {
       this.refreshStaticMapLayersRequested = false;
     }
 
-    var particleLayersList = jsonData.particles
+    const particleLayersList = jsonData.particles
       .slice(0, Math.min(jsonData.particles.length, 10))
       .map(pnt => {
         return Leaflet.circleMarker([pnt.x, pnt.y], {
@@ -151,11 +152,11 @@ export class RMap extends React.Component<Props, State> {
           opacity: 0.1
         });
       });
-    var newParticlesLayerGroup = Leaflet.layerGroup(particleLayersList);
+    const newParticlesLayerGroup = Leaflet.layerGroup(particleLayersList);
     this.particles.addLayer(newParticlesLayerGroup);
 
-    var odoY = jsonData.odoPose.y;
-    var odoX = jsonData.odoPose.x;
+    const odoY = jsonData.odoPose.y;
+    const odoX = jsonData.odoPose.x;
     if (this.oldOdoY && this.oldOdoX) {
       this.odoPathLayerGroup.addData({
         type: "LineString",
@@ -165,8 +166,8 @@ export class RMap extends React.Component<Props, State> {
     this.oldOdoY = odoY;
     this.oldOdoX = odoX;
 
-    var trueY = jsonData.truePose.y;
-    var trueX = jsonData.truePose.x;
+    const trueY = jsonData.truePose.y;
+    const trueX = jsonData.truePose.x;
     if (this.oldTrueY && this.oldTrueX) {
       this.truePath.addData({
         type: "LineString",
@@ -176,8 +177,8 @@ export class RMap extends React.Component<Props, State> {
     this.oldTrueY = trueY;
     this.oldTrueX = trueX;
 
-    var bestY = jsonData.bestPose.y;
-    var bestX = jsonData.bestPose.x;
+    const bestY = jsonData.bestPose.y;
+    const bestX = jsonData.bestPose.x;
     if (this.oldBestY && this.oldBestX) {
       this.bestPath.addData({
         type: "LineString",

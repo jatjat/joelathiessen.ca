@@ -81,7 +81,7 @@ export class CtrlForm extends React.Component<Props, State> {
         sAngVar = parseFloat(this.state.sensorAngVar);
       }
 
-      var applyMsg = {
+      const applyMsg = {
         msgType: "slamSettings",
         msg: {
           numParticles: nParticles,
@@ -185,20 +185,21 @@ export class CtrlForm extends React.Component<Props, State> {
   }
 
   render() {
+    const numPartValidity = this.getNumParticlesValidationState(true);
+    const sensorDistVarValidity = this.getSensorDistVarValidationState(true);
+    const sensorAngVarValidity = this.getSensorAngVarValidationState(true);
+
     var numParticlesHelpBlock = null;
-    var numPartValidity = this.getNumParticlesValidationState(true);
     if (numPartValidity.validity != "success") {
       numParticlesHelpBlock = <HelpBlock>{numPartValidity.msg}</HelpBlock>;
     }
     var sensorDistVarHelpBlock = null;
-    var sensorDistVarValidity = this.getSensorDistVarValidationState(true);
     if (sensorDistVarValidity.validity != "success") {
       sensorDistVarHelpBlock = (
         <HelpBlock>{sensorDistVarValidity.msg}</HelpBlock>
       );
     }
     var sensorAngVarHelpBlock = null;
-    var sensorAngVarValidity = this.getSensorAngVarValidationState(true);
     if (sensorAngVarValidity.validity != "success") {
       sensorAngVarHelpBlock = <HelpBlock>{sensorAngVarValidity.msg}</HelpBlock>;
     }
