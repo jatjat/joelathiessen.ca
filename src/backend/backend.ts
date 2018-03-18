@@ -99,9 +99,9 @@ function onKalyWSMessage(data: string, clientSocket: SocketIO.Socket) {
 function onClientMessage(data: any, kalyWS: WebSocket) {
   console.log("server recieved from client: " + JSON.stringify(data));
 
-  const validData = validatedClientMessage(data);
-  if (validData != null) {
-    const validDataStr = JSON.stringify(validData);
+  const validated = validatedClientMessage(data);
+  if (validated.isValid) {
+    const validDataStr = JSON.stringify(validated.data);
     console.log("server sending to kaly2: " + validDataStr);
     kalyWS.send(validDataStr);
   }
@@ -113,8 +113,10 @@ type ValidClientData = {
   msg: {};
 };
 
-function validatedClientMessage(data: any): ValidClientData {
-  var validData: ValidClientData = null;
+function validatedClientMessage(
+  data: any
+): { isValid: Boolean; data?: ValidClientData } {
+  var validData: ValidClientData;
 
   // Modify incoming data so that something valid is always sent
   // TODO: Validate using JSON schemas instead?
@@ -142,5 +144,5 @@ function validatedClientMessage(data: any): ValidClientData {
       validData.sessionID = Math.max(0, data.msg.sessionID);
     }
   }
-  return validData;
+  return { isValid: validData != undefined, data: validData };
 }
