@@ -9,7 +9,7 @@ module.exports = {
     __dirname: false
   },
   entry: {
-    main: "./src/backend.ts"
+    main: "./src/backend/backend.ts"
   },
   externals: [nodeExternals()],
   output: {

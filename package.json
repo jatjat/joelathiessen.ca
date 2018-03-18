@@ -4,7 +4,7 @@
   "description": "Joel Thiessen's Website",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon dist/backend.bundle.js -p 3000",
+    "start": "nodemon dist/backend.bundle.js",
     "start:prod": "NODE_ENV=production PORT=80 nodemon dist/backend.bundle.js",
     "build":
       "webpack --mode production --config webpack/webpack.backend.js && webpack --mode production --config webpack/webpack.prod.js",
