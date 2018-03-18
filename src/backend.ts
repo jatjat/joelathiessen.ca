@@ -1,6 +1,5 @@
 import express from "express";
 import path from "path";
-import swig from "swig";
 import compression from "compression";
 import expressSession from "express-session";
 import sessionFileStore from "session-file-store";
@@ -10,7 +9,6 @@ import IO from "socket.io";
 
 const NUM_PLACES = 2;
 const DEFAULT_WS_ADDR = "ws://localhost:9000/api/ws/robot";
-const LOCALHOST_ADDR = "http://localhost:8080/";
 const KALY_PING_INTERVAL_MS = 5000;
 
 const SessionStore = sessionFileStore(expressSession);
@@ -24,12 +22,6 @@ const session = expressSession({
   resave: true
 });
 
-const cdn = process.env.NODE_ENV === "production" ? "/" : LOCALHOST_ADDR;
-swig.setDefaults({
-  locals: {
-    cdn: cdn
-  }
-});
 const app = express();
 
 app.use(
@@ -38,19 +30,10 @@ app.use(
   })
 );
 
-app.engine("html", swig.renderFile);
-app.set("view engine", "html");
-
 app.use("/img", express.static(path.join(__dirname, "../img")));
 app.use("/css", express.static(path.join(__dirname, "../css")));
 app.use("/public", express.static(path.join(__dirname, "../public")));
 app.use("/", express.static(path.join(__dirname, "../dist")));
-
-app.get("/", (req, res) => {
-  res.render("../src/index.html", {
-    cdn: cdn
-  });
-});
 
 const server = app.listen(process.env.PORT || 3000, () => {
   console.log("Express server listening on port " + server.address().port);
