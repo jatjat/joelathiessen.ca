@@ -24,7 +24,7 @@ type State = {
 };
 
 export class RobotsApp extends React.Component<Props, State> {
-  private handleMapData = null;
+  private handleMapData: Function = null;
   private history = [];
   private io = null;
 
@@ -52,7 +52,7 @@ export class RobotsApp extends React.Component<Props, State> {
       path: location.pathname.replace(/[^/]*$/, "") + "socket.io"
     });
     this.io.on("message", (data, flags) => {
-      var jsonData = JSON.parse(data);
+      const jsonData = JSON.parse(data);
       this.history += jsonData;
 
       if (this.handleMapData != null) {
@@ -73,7 +73,7 @@ export class RobotsApp extends React.Component<Props, State> {
       });
       console.log("connected");
 
-      var startMsg = {
+      const startMsg = {
         msgType: "robotSessionSettings",
         msg: {
           shouldRun: true,
@@ -124,7 +124,7 @@ export class RobotsApp extends React.Component<Props, State> {
 
   handleStartButtonClick() {
     if (this.state.connected == "connected") {
-      var startMsg = {
+      const startMsg = {
         msgType: "robotSessionSettings",
         msg: {
           shouldRun: !this.state.isRunning,
@@ -137,7 +137,7 @@ export class RobotsApp extends React.Component<Props, State> {
 
   handleResetButtonClick() {
     if (this.state.connected == "connected") {
-      var resetMsg = {
+      const resetMsg = {
         msgType: "robotSessionSettings",
         msg: {
           shouldRun: this.state.isRunning,
