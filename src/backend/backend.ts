@@ -11,6 +11,7 @@ const OUTGOING_FRACTION_DIGITS = 2; // limit length of number strings sent from 
 const DEFAULT_WS_ADDR = "ws://localhost:9000/api/ws/robot";
 const KALY_PING_INTERVAL_MS = 5000;
 const DEFAULT_PORT = 3000;
+const MAX_ALLOWED_PARTICLES = 100;
 
 run();
 
@@ -53,7 +54,6 @@ function shouldCompress(req: express.Request, res: express.Response): boolean {
 }
 
 function onClientConnection(clientSocket: SocketIO.Socket) {
-  // for now, always get an unspecified robot:
   const kalyWS = new WebSocket(process.env.WS_ADDR || DEFAULT_WS_ADDR);
   kalyWS.on("open", () => onKalyWSOpen(kalyWS, clientSocket));
 }
@@ -128,7 +128,10 @@ function validatedClientMessage(
     validData = {
       msgType: "slamSettings",
       msg: {
-        numParticles: Math.max(1, Math.min(100, data.msg.numParticles)),
+        numParticles: Math.max(
+          1,
+          Math.min(MAX_ALLOWED_PARTICLES, data.msg.numParticles)
+        ),
         sensorDistconst: Math.max(0, data.msg.sensorDistconst),
         sensorAngconst: Math.max(0, data.msg.sensorAngconst)
       }
