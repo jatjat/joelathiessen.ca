@@ -69,7 +69,7 @@ function onKalyWSOpen(kalyWS: WebSocket, clientSocket: SocketIO.Socket) {
   }, KALY_PING_INTERVAL_MS);
 
   kalyWS.on("message", (data: string) => {
-    onkalyWSMessage(data, clientSocket);
+    onKalyWSMessage(data, clientSocket);
   });
 
   clientSocket.on("message", (data: {}) => {
@@ -82,7 +82,7 @@ function onKalyWSOpen(kalyWS: WebSocket, clientSocket: SocketIO.Socket) {
   });
 }
 
-function onkalyWSMessage(data: string, clientSocket: SocketIO.Socket) {
+function onKalyWSMessage(data: string, clientSocket: SocketIO.Socket) {
   const lessPrecise: any = JSON.stringify(JSON.parse(data), (key, value) => {
     if (typeof value == "number") {
       return parseFloat(value.toFixed(OUTGOING_FRACTION_DIGITS));
