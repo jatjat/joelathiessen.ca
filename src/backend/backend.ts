@@ -62,7 +62,11 @@ function onKalyWSOpen(kalyWS: WebSocket, clientSocket: SocketIO.Socket) {
   console.log("client connected");
 
   const kalyPingInterval = setInterval(() => {
-    if (clientSocket.disconnected || kalyWS.CLOSING || kalyWS.CLOSED) {
+    if (
+      clientSocket.disconnected ||
+      kalyWS.readyState === WebSocket.CLOSING ||
+      kalyWS.readyState === WebSocket.CLOSED
+    ) {
       clearInterval(kalyPingInterval);
     }
     kalyWS.ping();
