@@ -1,4 +1,7 @@
 node_modules/*
-npm-debug.log
 public/*
 dist/*
+.vscode
+.idea
+yarn-error.log
+npm-debug.log
