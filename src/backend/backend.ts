@@ -7,124 +7,140 @@ import socketIoSession from "socket.io-express-session";
 import WebSocket from "ws";
 import IO from "socket.io";
 
-const NUM_PLACES = 2;
+const OUTGOING_FRACTION_DIGITS = 2; // limit length of number strings sent from kaly2 to client
 const DEFAULT_WS_ADDR = "ws://localhost:9000/api/ws/robot";
 const KALY_PING_INTERVAL_MS = 5000;
+const DEFAULT_PORT = 3000;
 
-const SessionStore = sessionFileStore(expressSession);
+run();
 
-const session = expressSession({
-  store: new SessionStore({
-    path: __dirname + "/tmp/sessions"
-  }),
-  secret: process.env.SES_SECRET || "devSecret",
-  saveUninitialized: true,
-  resave: true
-});
+function run() {
+  const SessionStore = sessionFileStore(expressSession);
 
-const app = express();
-
-app.use(
-  compression({
-    filter: shouldCompress
-  })
-);
-
-app.use("/img", express.static(path.join(__dirname, "../img")));
-app.use("/css", express.static(path.join(__dirname, "../css")));
-app.use("/public", express.static(path.join(__dirname, "../public")));
-app.use("/", express.static(path.join(__dirname, "../dist")));
-
-const server = app.listen(process.env.PORT || 3000, () => {
-  console.log("Express server listening on port " + server.address().port);
-});
-
-const io = IO(server);
-io.use(socketIoSession(session));
-io.on("connection", socket => {
-  var kalyClientAccessable = true;
-
-  // for now, always get an unspecified robot:
-  const kalyClient = new WebSocket(process.env.WS_ADDR || DEFAULT_WS_ADDR);
-  kalyClient.on("open", function open() {
-    kalyClient.on("message", (data: any, flags: any) => {
-      const lessPrecise: any = JSON.stringify(
-        JSON.parse(data),
-        (key, value) => {
-          if (typeof value == "number") {
-            return parseFloat(value.toFixed(NUM_PLACES));
-          }
-          return value;
-        }
-      );
-
-      if (lessPrecise["msgType"] === "slamSettings") {
-        console.log(
-          "sending slamSettings from kaly2 to client: " + lessPrecise
-        );
-      }
-      socket.emit("message", lessPrecise);
-    });
-
-    socket.on("message", (data, flags) => {
-      console.log("server recieved from client: " + JSON.stringify(data));
-      var validData: {
-        msgType: String;
-        sessionID?: number;
-        msg: {};
-      } = null;
-
-      // Modify incoming data so that something valid is always sent
-      // TODO: Validate using JSON schemas instead?
-      if (data.msgType == "slamSettings") {
-        validData = {
-          msgType: "slamSettings",
-          msg: {
-            numParticles: Math.max(1, Math.min(100, data.msg.numParticles)),
-            sensorDistconst: Math.max(0, data.msg.sensorDistconst),
-            sensorAngconst: Math.max(0, data.msg.sensorAngconst)
-          }
-        };
-        if (data.msg.sessionID) {
-          validData.sessionID = Math.max(0, data.msg.sessionID);
-        }
-      } else if (data.msgType == "robotSessionSettings") {
-        validData = {
-          msgType: "robotSessionSettings",
-          msg: {
-            shouldRun: data.msg.shouldRun == true,
-            shouldReset: data.msg.shouldReset == true
-          }
-        };
-        if (data.msg.sessionID) {
-          validData.sessionID = Math.max(0, data.msg.sessionID);
-        }
-      }
-
-      if (validData != null) {
-        console.log("server sending to kaly2: " + JSON.stringify(validData));
-        kalyClient.send(JSON.stringify(validData));
-      }
-    });
-
-    // ensure that websocket connection to kaly2 does not time out
-    const kalyPingInterval = setInterval(() => {
-      if (kalyClientAccessable === true) {
-        kalyClient.ping();
-      } else {
-        clearInterval(kalyPingInterval);
-      }
-    }, KALY_PING_INTERVAL_MS);
-
-    console.log("client connected");
-    socket.on("disconnect", () => {
-      kalyClientAccessable = false;
-      kalyClient.close();
-      console.log("client disconnected");
-    });
+  const session = expressSession({
+    store: new SessionStore({
+      path: __dirname + "/tmp/sessions"
+    }),
+    secret: process.env.SES_SECRET || "devSecret",
+    saveUninitialized: true,
+    resave: true
   });
-});
 
-function shouldCompress(req: any, res: any) {
+  const app = express();
+
+  app.use(
+    compression({
+      filter: shouldCompress
+    })
+  );
+
+  app.use("/img", express.static(path.join(__dirname, "../img")));
+  app.use("/css", express.static(path.join(__dirname, "../css")));
+  app.use("/public", express.static(path.join(__dirname, "../public")));
+  app.use("/", express.static(path.join(__dirname, "../dist")));
+
+  const server = app.listen(process.env.PORT || DEFAULT_PORT, () => {
+    console.log("Express server listening on port " + server.address().port);
+  });
+
+  const io = IO(server);
+  io.use(socketIoSession(session));
+  io.on("connection", onClientConnection);
+}
+
+function shouldCompress(req: express.Request, res: express.Response): boolean {
   return req.headers["x-no-compression"] ? false : compression.filter(req, res);
+}
+
+function onClientConnection(clientSocket: SocketIO.Socket) {
+  // for now, always get an unspecified robot:
+  const kalyWS = new WebSocket(process.env.WS_ADDR || DEFAULT_WS_ADDR);
+  kalyWS.on("open", () => onKalyWSOpen(kalyWS, clientSocket));
+}
+
+function onKalyWSOpen(kalyWS: WebSocket, clientSocket: SocketIO.Socket) {
+  console.log("client connected");
+
+  const kalyPingInterval = setInterval(() => {
+    if (clientSocket.disconnected || kalyWS.CLOSING || kalyWS.CLOSED) {
+      clearInterval(kalyPingInterval);
+    }
+    kalyWS.ping();
+  }, KALY_PING_INTERVAL_MS);
+
+  kalyWS.on("message", (data: string) => {
+    onkalyWSMessage(data, clientSocket);
+  });
+
+  clientSocket.on("message", (data: {}) => {
+    onClientMessage(data, kalyWS);
+  });
+
+  clientSocket.on("disconnect", () => {
+    kalyWS.close();
+    console.log("client disconnected");
+  });
+}
+
+function onkalyWSMessage(data: string, clientSocket: SocketIO.Socket) {
+  const lessPrecise: any = JSON.stringify(JSON.parse(data), (key, value) => {
+    if (typeof value == "number") {
+      return parseFloat(value.toFixed(OUTGOING_FRACTION_DIGITS));
+    }
+    return value;
+  });
+
+  if (lessPrecise["msgType"] === "slamSettings") {
+    console.log("sending slamSettings from kaly2 to client: " + lessPrecise);
+  }
+  clientSocket.emit("message", lessPrecise);
+}
+
+function onClientMessage(data: any, kalyWS: WebSocket) {
+  console.log("server recieved from client: " + JSON.stringify(data));
+
+  const validData = validatedClientMessage(data);
+  if (validData != null) {
+    const validDataStr = JSON.stringify(validData);
+    console.log("server sending to kaly2: " + validDataStr);
+    kalyWS.send(validDataStr);
+  }
+}
+
+type ValidClientData = {
+  msgType: String;
+  sessionID?: number;
+  msg: {};
+};
+
+function validatedClientMessage(data: any): ValidClientData {
+  var validData: ValidClientData = null;
+
+  // Modify incoming data so that something valid is always sent
+  // TODO: Validate using JSON schemas instead?
+  if (data.msgType == "slamSettings") {
+    validData = {
+      msgType: "slamSettings",
+      msg: {
+        numParticles: Math.max(1, Math.min(100, data.msg.numParticles)),
+        sensorDistconst: Math.max(0, data.msg.sensorDistconst),
+        sensorAngconst: Math.max(0, data.msg.sensorAngconst)
+      }
+    };
+    if (data.msg.sessionID) {
+      validData.sessionID = Math.max(0, data.msg.sessionID);
+    }
+  } else if (data.msgType == "robotSessionSettings") {
+    validData = {
+      msgType: "robotSessionSettings",
+      msg: {
+        shouldRun: data.msg.shouldRun == true,
+        shouldReset: data.msg.shouldReset == true
+      }
+    };
+    if (data.msg.sessionID) {
+      validData.sessionID = Math.max(0, data.msg.sessionID);
+    }
+  }
+  return validData;
 }
