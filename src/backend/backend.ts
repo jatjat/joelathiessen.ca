@@ -59,30 +59,50 @@ function onClientConnection(clientSocket: SocketIO.Socket) {
 }
 
 function onKalyWSOpen(kalyWS: WebSocket, clientSocket: SocketIO.Socket) {
-  console.log("client connected");
+  console.log("Client connected");
+  kalyWS.on("error", error =>
+    console.log("Websocket Error encountered in connection to kaly2: ", error)
+  );
 
-  const kalyPingInterval = setInterval(() => {
-    if (
-      clientSocket.disconnected ||
-      kalyWS.readyState === WebSocket.CLOSING ||
-      kalyWS.readyState === WebSocket.CLOSED
-    ) {
-      clearInterval(kalyPingInterval);
-    }
-    kalyWS.ping();
-  }, KALY_PING_INTERVAL_MS);
+  closeIfKalyWsTimeout(kalyWS, clientSocket);
 
-  kalyWS.on("message", (data: string) => {
-    onKalyWSMessage(data, clientSocket);
-  });
+  kalyWS.on("message", (data: string) => onKalyWSMessage(data, clientSocket));
 
-  clientSocket.on("message", (data: {}) => {
-    onClientMessage(data, kalyWS);
-  });
+  clientSocket.on("message", (data: {}) => onClientMessage(data, kalyWS));
 
   clientSocket.on("disconnect", () => {
     kalyWS.close();
-    console.log("client disconnected");
+    console.log("Client disconnected");
+  });
+}
+
+function closeIfKalyWsTimeout(kalyWS, clientSocket) {
+  var isAlive = true;
+  const kalyPingInterval = setInterval(() => {
+    if (
+      kalyWS.readyState === WebSocket.CLOSING ||
+      kalyWS.readyState === WebSocket.CLOSED
+    ) {
+      console.log(
+        "Websocket connection to kaly2 is closing or closed; terminating client connection"
+      );
+      clearInterval(kalyPingInterval);
+      return clientSocket.disconnect();
+    } else if (isAlive === false) {
+      console.log(
+        "Websocket timeout encountered in connection to kaly2; terminating it, and client connection"
+      );
+      clearInterval(kalyPingInterval);
+      clientSocket.disconnect();
+      return kalyWS.terminate();
+    } else {
+      isAlive = false;
+      kalyWS.ping(() => null);
+    }
+  }, KALY_PING_INTERVAL_MS);
+
+  kalyWS.on("pong", () => {
+    isAlive = true;
   });
 }
 
@@ -95,19 +115,26 @@ function onKalyWSMessage(data: string, clientSocket: SocketIO.Socket) {
   });
 
   if (lessPrecise["msgType"] === "slamSettings") {
-    console.log("sending slamSettings from kaly2 to client: " + lessPrecise);
+    console.log("Sending slamSettings from kaly2 to client: " + lessPrecise);
   }
   clientSocket.emit("message", lessPrecise);
 }
 
 function onClientMessage(data: any, kalyWS: WebSocket) {
-  console.log("server recieved from client: " + JSON.stringify(data));
-
-  const validated = validatedClientMessage(data);
-  if (validated.isValid) {
-    const validDataStr = JSON.stringify(validated.data);
-    console.log("server sending to kaly2: " + validDataStr);
-    kalyWS.send(validDataStr);
+  console.log("Server recieved from client: " + JSON.stringify(data));
+  if (kalyWS.readyState === WebSocket.OPEN) {
+    const validated = validatedClientMessage(data);
+    if (validated.isValid) {
+      const validDataStr = JSON.stringify(validated.data);
+      console.log("Server sending to kaly2: " + validDataStr);
+      kalyWS.send(validDataStr, err => {
+        if (err) {
+          console.log("Error sending to kaly2: ", err);
+        }
+      });
+    }
+  } else {
+    console.log("Not sending to kaly2; connection is not open");
   }
 }
 
@@ -132,8 +159,8 @@ function validatedClientMessage(
           1,
           Math.min(MAX_ALLOWED_PARTICLES, data.msg.numParticles)
         ),
-        sensorDistconst: Math.max(0, data.msg.sensorDistconst),
-        sensorAngconst: Math.max(0, data.msg.sensorAngconst)
+        sensorDistVar: Math.max(0, data.msg.sensorDistVar),
+        sensorAngVar: Math.max(0, data.msg.sensorAngVar)
       }
     };
     if (data.msg.sessionID) {
