@@ -71,7 +71,7 @@ function onKalyWSOpen(kalyWS: WebSocket, clientSocket: SocketIO.Socket) {
   clientSocket.on("message", (data: {}) => onClientMessage(data, kalyWS));
 
   clientSocket.on("disconnect", () => {
-    kalyWS.close();
+    kalyWS.terminate();
     console.log("Client disconnected");
   });
 }
