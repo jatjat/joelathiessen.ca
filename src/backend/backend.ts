@@ -9,7 +9,7 @@ import IO from "socket.io";
 
 const OUTGOING_FRACTION_DIGITS = 2; // limit length of number strings sent from kaly2 to client
 const DEFAULT_WS_ADDR = "ws://localhost:9000/api/ws/robot";
-const KALY_PING_INTERVAL_MS = 5000;
+const KALY_PING_INTERVAL_MS = 15000;
 const DEFAULT_PORT = 3000;
 const MAX_ALLOWED_PARTICLES = 100;
 
