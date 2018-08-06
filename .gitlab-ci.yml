@@ -29,7 +29,7 @@ test1:
   before_script: []
   stage: test
   script:
-    - echo "test1"
+    - echo "test1a"
   except:
     - tags
 
@@ -39,7 +39,7 @@ test2:
   before_script: []
   stage: test
   script:
-    - echo "test2"
+    - echo "test2a"
   except:
     - tags
 
