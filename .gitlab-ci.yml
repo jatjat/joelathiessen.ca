@@ -1,4 +1,4 @@
-image: docker:latest
+image: docker:stable
 services:
   - docker:dind
 
@@ -10,7 +10,8 @@ stages:
   - production
 
 variables:
-  DOCKER_DRIVER: overlay
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://localhost:2375
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
