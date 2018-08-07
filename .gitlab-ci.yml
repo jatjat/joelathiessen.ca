@@ -14,10 +14,13 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: tcp://localhost:2375
   DOCKER_DAEMON_JSON: '{"insecure-registries" : ["registry.joelathiessen.ca"]}'
+  DOCKER_DAEMON_ARGS: --insecure-registry registry.joelathiessen.ca:$DOCKER_DAEMON_ARGS
 
 before_script:
+  - mkdir /etc/docker
   - echo $DOCKER_DAEMON_JSON > /etc/docker/daemon.json
   - cat /etc/docker/daemon.json
+  - service docker restart
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
 
 build:
