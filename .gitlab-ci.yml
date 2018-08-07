@@ -20,7 +20,7 @@ before_script:
   - mkdir /etc/docker
   - echo $DOCKER_DAEMON_JSON > /etc/docker/daemon.json
   - cat /etc/docker/daemon.json
-  - service docker restart
+  - docker restart
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
 
 build:
