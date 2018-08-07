@@ -29,7 +29,7 @@ build:
   script:
     - docker build --pull -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF .
     - nslookup registry.joelathiessen.ca
-    - apt-get install curl -y && curl -vk https://registry.joelathiessen.ca
+    - wget https://registry.joelathiessen.ca
     - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF
   except:
     - tags
