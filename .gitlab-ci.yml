@@ -1,6 +1,7 @@
 image: docker:stable
 services:
-  - docker:dind
+  - name: docker:dind
+    command: ["--insecure-registry=registry.joelathiessen.ca"]
 
 stages:
   - build
