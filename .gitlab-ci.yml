@@ -1,4 +1,5 @@
 image: docker:stable
+
 services:
   - docker:dind
 
@@ -15,7 +16,6 @@ variables:
   DOCKER_DAEMON_JSON: '{"insecure-registries" : ["registry.joelathiessen.ca"]}'
 
 before_script:
-  - cat /etc/docker/daemon.json
   - echo $DOCKER_DAEMON_JSON > /etc/docker/daemon.json
   - cat /etc/docker/daemon.json
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
