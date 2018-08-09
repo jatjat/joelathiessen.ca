@@ -12,7 +12,7 @@ COPY src ./src
 COPY typings ./typings
 COPY webpack/ ./webpack
 
-#RUN yarn build
+#RUN yarn build#
 
 EXPOSE 8080
 CMD [ "yarn", "start" ]
