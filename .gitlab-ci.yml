@@ -1,0 +1,66 @@
+image: docker:stable
+
+services:
+  - dind:stable
+
+stages:
+  - build
+  - test
+  - release
+  - staging
+  - production
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: "tcp://localhost:2375"
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+
+build:
+  stage: build
+  script:
+    - docker build --pull -t $CI_REGISTRY_IMAGE:$CI_BUILD_REF .
+    - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF
+  except:
+    - tags
+
+test1:
+  image: $CI_REGISTRY_IMAGE:$CI_BUILD_REF
+  services: []
+  before_script: []
+  stage: test
+  script:
+    - echo "test1a"
+  except:
+    - tags
+
+test2:
+  image: $CI_REGISTRY_IMAGE:$CI_BUILD_REF
+  services: []
+  before_script: []
+  stage: test
+  script:
+    - echo "test2a"
+  except:
+    - tags
+
+# Non-master branches and tags will be released with :<ref_name> as the tag
+release-by-name:
+  stage: release
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_BUILD_REF
+    - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF
+  except:
+    - master
+
+# Master will be released with :latest as the tag
+release-master:
+  stage: release
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_BUILD_REF
+    - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    - master
