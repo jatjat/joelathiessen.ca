@@ -5,7 +5,6 @@ services:
 
 stages:
   - build
-  - test
   - release
   - staging
   - production
@@ -25,28 +24,7 @@ build:
   except:
     - tags
 
-test1:
-  image: $CI_REGISTRY_IMAGE:$CI_BUILD_REF
-  services: []
-  before_script: []
-  stage: test
-  script:
-    - echo "test1a"
-  except:
-    - tags
-
-test2:
-  image: $CI_REGISTRY_IMAGE:$CI_BUILD_REF
-  services: []
-  before_script: []
-  stage: test
-  script:
-    - echo "test2a"
-  except:
-    - tags
-
-# Non-master branches and tags will be released with :<ref_name> as the tag
-release-by-name:
+release-name:
   stage: release
   script:
     - docker pull $CI_REGISTRY_IMAGE:$CI_BUILD_REF
@@ -55,7 +33,6 @@ release-by-name:
   except:
     - master
 
-# Master will be released with :latest as the tag
 release-master:
   stage: release
   script:
