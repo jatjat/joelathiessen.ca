@@ -4,9 +4,9 @@
   "description": "Joel Thiessen's Website",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/backend.bundle.js",
-    "build": "webpack --mode production --config webpack.backend.js",
-    "watch": "webpack -w --mode development --config webpack.backend.js"
+    "start": "node dist/server.bundle.js",
+    "build": "webpack --mode production --config webpack.server.js",
+    "watch": "webpack -w --mode development --config webpack.server.js"
   },
   "author": "Joel Thiessen",
   "license": "ISC",

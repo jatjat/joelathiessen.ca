@@ -3,11 +3,11 @@ const merge = require("webpack-merge");
 const common = require("./webpack.common.js");
 module.exports = merge(common, {
   output: {
-    path: path.join(__dirname, "../backend/dist/"),
+    path: path.join(__dirname, "../server/dist/"),
     filename: "[name].bundle.js"
   },
   devServer: {
-    contentBase: "../backend/public",
+    contentBase: "../server/public",
     port: 8080,
     proxy: {
       "/img": {

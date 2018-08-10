@@ -1,7 +1,5 @@
 const path = require("path");
 const nodeExternals = require("webpack-node-externals");
-const WriteFilePlugin = require("write-file-webpack-plugin");
-const webpack = require("webpack");
 
 module.exports = {
   target: "node",
@@ -9,12 +7,12 @@ module.exports = {
     __dirname: false
   },
   entry: {
-    main: "./src/backend.ts"
+    main: "./src/server.ts"
   },
   externals: [nodeExternals()],
   output: {
     path: path.join(__dirname, "dist"),
-    filename: "backend.bundle.js"
+    filename: "server.bundle.js"
   },
   resolve: {
     extensions: [".ts", ".tsx"],
