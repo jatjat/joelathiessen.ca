@@ -9,25 +9,19 @@ module.exports = {
     __dirname: false
   },
   entry: {
-    main: "./src/backend/backend.ts"
+    main: "./src/backend.ts"
   },
   externals: [nodeExternals()],
   output: {
-    path: path.join(__dirname, "../dist/"),
+    path: path.join(__dirname, "dist"),
     filename: "backend.bundle.js"
   },
   resolve: {
     extensions: [".ts", ".tsx"],
-    modules: ["../node_modules", "node_modules"]
+    modules: ["node_modules"]
   },
   module: {
     rules: [{ test: /.tsx?$/, use: ["awesome-typescript-loader"] }]
   },
-  devtool: "inline-source-map",
-  plugins: [
-    new WriteFilePlugin(),
-    new webpack.DefinePlugin({
-      "process.env.NODE_ENV": JSON.stringify("production")
-    })
-  ]
+  devtool: "inline-source-map"
 };

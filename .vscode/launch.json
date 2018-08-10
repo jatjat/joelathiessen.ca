@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/dist/backend.bundle.js",
+      "program": "${workspaceFolder}/backend/dist/backend.bundle.js",
       "args": ["-p 3000", "--debug", "--inspect"]
     }
   ]
