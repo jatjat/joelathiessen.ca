@@ -1,20 +1,15 @@
-const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   entry: {
-    main: "./src/frontend/root.tsx"
-  },
-  output: {
-    path: path.join(__dirname, "../dist/"),
-    filename: "[name].bundle.js"
+    main: "./src/root.tsx"
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".html"]
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./src/backend/index.html"
+      template: "./src/index.html"
     })
   ],
   module: {

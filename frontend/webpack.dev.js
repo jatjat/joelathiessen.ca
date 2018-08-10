@@ -1,10 +1,13 @@
+const path = require("path");
 const merge = require("webpack-merge");
 const common = require("./webpack.common.js");
-const WriteFilePlugin = require("write-file-webpack-plugin");
-
 module.exports = merge(common, {
+  output: {
+    path: path.join(__dirname, "../backend/dist/"),
+    filename: "[name].bundle.js"
+  },
   devServer: {
-    contentBase: "./public",
+    contentBase: "../backend/public",
     port: 8080,
     proxy: {
       "/img": {

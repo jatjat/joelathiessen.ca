@@ -35,10 +35,11 @@ function run() {
     })
   );
 
-  app.use("/img", express.static(path.join(__dirname, "../img")));
-  app.use("/css", express.static(path.join(__dirname, "../css")));
-  app.use("/public", express.static(path.join(__dirname, "../public")));
-  app.use("/", express.static(path.join(__dirname, "../dist")));
+  console.log(__dirname);
+  app.use("/img", express.static(path.join(__dirname, "../img/")));
+  app.use("/css", express.static(path.join(__dirname, "../css/")));
+  app.use("/public", express.static(path.join(__dirname, "../public/")));
+  app.use("/", express.static(path.join(__dirname, "../dist/")));
 
   const server = app.listen(process.env.PORT || DEFAULT_PORT, () => {
     console.log("Express server listening on port " + server.address().port);
