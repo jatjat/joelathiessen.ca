@@ -45,15 +45,17 @@ release-master:
 .common-deploy-script: &common-deploy-script
   script:
     # Rollback enabled:
-    - sed -i "s/__IMAGE_NAME__/$CI_REGISTRY_IMAGE:$CI_BUILD_REF" deployment.yml
+    - echo "$CI_REGISTRY_IMAGE"
+    - echo "$CI_BUILD_REF"
+    - sed -i "s/__IMAGE_NAME__/$CI_REGISTRY_IMAGE:$CI_BUILD_REF/" deployment.yml
 
-    - sed -i "s/__JOEL_DEPLOYMENT_NAME__/$JOEL_DEPLOYMENT_NAME" deployment.yml
-    - sed -i "s/__JOEL_CONTAINER_NAME__/$JOEL_CONTAINER_NAME" deployment.yml
-    - sed -i "s/__JOEL_APP_LABEL__/$JOEL_APP_LABEL" deployment.yml service.yml
-    - sed -i "s/__KALY2_SERVICE_NAME__/$KALY2_SERVICE_NAME" deployment.yml service.yml
+    - sed -i "s/__JOEL_DEPLOYMENT_NAME__/$JOEL_DEPLOYMENT_NAME/" deployment.yml
+    - sed -i "s/__JOEL_CONTAINER_NAME__/$JOEL_CONTAINER_NAME/" deployment.yml
+    - sed -i "s/__JOEL_APP_LABEL__/$JOEL_APP_LABEL/" deployment.yml service.yml
+    - sed -i "s/__KALY2_SERVICE_NAME__/$KALY2_SERVICE_NAME/" deployment.yml service.yml
     - |
       SESSION_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1);
-      sed -i "s/__SES_SECRET__/$SESSION_SECRET" deployment.yml
+      sed -i "s/__SES_SECRET__/$SESSION_SECRET/" deployment.yml
 
     - kubectl apply -f service.yml
     - |
