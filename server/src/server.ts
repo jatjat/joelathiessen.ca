@@ -9,6 +9,8 @@ import IO from "socket.io";
 
 const OUTGOING_FRACTION_DIGITS = 2; // limit length of number strings sent from kaly2 to client
 const DEFAULT_WS_ADDR = "ws://localhost:9000/api/ws/robot";
+const KALY2_SERVICE_WS_ADDR = kaly2ServiceName =>
+  `ws://${kaly2ServiceName}/api/ws/robot`;
 const KALY_PING_INTERVAL_MS = 15000;
 const DEFAULT_PORT = 3000;
 const MAX_ALLOWED_PARTICLES = 100;
@@ -55,8 +57,16 @@ function shouldCompress(req: express.Request, res: express.Response): boolean {
 }
 
 function onClientConnection(clientSocket: SocketIO.Socket) {
-  const kalyWS = new WebSocket(process.env.WS_ADDR || DEFAULT_WS_ADDR);
+  const kalyWS = new WebSocket(
+    getKaly2ServiceAddr(process.env.KALY2_SERVICE_NAME) ||
+      process.env.WS_ADDR ||
+      DEFAULT_WS_ADDR
+  );
   kalyWS.on("open", () => onKalyWSOpen(kalyWS, clientSocket));
+}
+
+function getKaly2ServiceAddr(serviceDNSName: string): string {
+  return !!serviceDNSName ? KALY2_SERVICE_WS_ADDR(serviceDNSName) : null;
 }
 
 function onKalyWSOpen(kalyWS: WebSocket, clientSocket: SocketIO.Socket) {

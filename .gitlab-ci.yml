@@ -41,3 +41,53 @@ release-master:
     - docker push $CI_REGISTRY_IMAGE:latest
   only:
     - master
+
+.common-deploy-script: &common-deploy-script
+  script:
+    # Rollback enabled:
+    - sed -i "s/__IMAGE_NAME__/$CI_REGISTRY_IMAGE:$CI_BUILD_REF" deployment.yml
+
+    - sed -i "s/__JOEL_DEPLOYMENT_NAME__/$JOEL_DEPLOYMENT_NAME" deployment.yml
+    - sed -i "s/__JOEL_CONTAINER_NAME__/$JOEL_CONTAINER_NAME" deployment.yml
+    - sed -i "s/__JOEL_APP_LABEL__/$JOEL_APP_LABEL" deployment.yml service.yml
+    - sed -i "s/__KALY2_SERVICE_NAME__/$KALY2_SERVICE_NAME" deployment.yml service.yml
+    - |
+      SESSION_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1);
+      sed -i "s/__SES_SECRET__/$SESSION_SECRET" deployment.yml
+
+    - kubectl apply -f service.yml
+    - |
+      if kubectl apply -f deployment.yaml | grep -q unchanged; then
+        echo "Forcing image update by patching deployment"
+        kubectl patch -f deployment.yaml -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"ci-last-updated\":\"$(date +'%s')\"}}}}}"
+      else
+        echo "Applying deployment caused succesful image update"
+      fi
+
+deploy-staging:
+  stage: staging
+  variables:
+    JOEL_DEPLOYMENT_NAME: "joel-deployment-staging"
+    JOEL_CONTAINER_NAME: "joel-container-staging"
+    JOEL_APP_LABEL: "joel-frontend-staging"
+    KALY2_SERVICE_NAME: "kaly2-staging.kaly2.svc.cluster.local"
+  <<: *common-deploy-script
+  environment:
+    name: staging
+    url: https://staging.home.joelathiessen.ca
+  except:
+    - master
+
+deploy-production:
+  stage: production
+  variables:
+    JOEL_DEPLOYMENT_NAME: "joel-deployment-prod"
+    JOEL_CONTAINER_NAME: "joel-container-prod"
+    JOEL_APP_LABEL: "joel-frontend-prod"
+    KALY2_SERVICE_NAME: "kaly2-prod.kaly2.svc.cluster.local"
+  <<: *common-deploy-script
+  environment:
+    name: production
+    url: https://prod.home.joelathiessen.ca
+  only:
+    - master
