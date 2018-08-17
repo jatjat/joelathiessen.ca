@@ -1,0 +1,23 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: __JOEL_DEPLOYMENT_NAME__
+spec:
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: __JOEL_APP_LABEL__
+    spec:
+      containers:
+        - name: __JOEL_CONTAINER_NAME__
+          image: __IMAGE_NAME__
+          ports:
+            - containerPort: 80
+          env:
+            - name: PORT
+              value: "80"
+            - name: KALY2_SERVICE_NAME
+              value: __KALY2_SERVICE_NAME__
+            - name: SES_SECRET
+              value: __SES_SECRET__
