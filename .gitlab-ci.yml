@@ -70,7 +70,7 @@ release-master:
 
 deploy-staging:
   stage: staging
-  image: wernight/kubectl
+  image: registry.joelathiessen.ca/kaly2/joelathiessen.ca/jbuild
   variables:
     JOEL_DEPLOYMENT_NAME: "joel-deployment-staging"
     JOEL_CONTAINER_NAME: "joel-container-staging"
@@ -85,7 +85,7 @@ deploy-staging:
 
 deploy-production:
   stage: production
-  image: wernight/kubectl
+  image: registry.joelathiessen.ca/kaly2/joelathiessen.ca/jbuild
   variables:
     JOEL_DEPLOYMENT_NAME: "joel-deployment-prod"
     JOEL_CONTAINER_NAME: "joel-container-prod"
