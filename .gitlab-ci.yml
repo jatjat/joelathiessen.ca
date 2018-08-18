@@ -58,6 +58,7 @@ release-master:
       #SESSION_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1);
       #sed -i "s|__SES_SECRET__|$SESSION_SECRET|" deployment.yml
     - kubectl apply -f service.yml
+    - kubectl apply -f ingress.yml
     - |
       if kubectl apply -f deployment.yml | grep -q unchanged; then
         echo "Forcing image update by patching deployment"
