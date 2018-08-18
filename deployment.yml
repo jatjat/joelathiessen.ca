@@ -9,7 +9,7 @@ spec:
       labels:
         app: __JOEL_APP_LABEL__
     spec:
-      magePullSecrets:
+      imagePullSecrets:
         - name: gitlab-registry
       containers:
         - name: __JOEL_CONTAINER_NAME__
