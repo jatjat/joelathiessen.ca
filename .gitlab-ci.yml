@@ -79,7 +79,7 @@ deploy-staging:
   <<: *common-deploy-script
   environment:
     name: staging
-    url: https://staging.home.joelathiessen.ca
+    url: https://staging.joelathiessen.ca
   except:
     - master
 
@@ -95,6 +95,6 @@ deploy-production:
   <<: *common-deploy-script
   environment:
     name: production
-    url: https://prod.home.joelathiessen.ca
+    url: https://prod.joelathiessen.ca
   only:
     - master
