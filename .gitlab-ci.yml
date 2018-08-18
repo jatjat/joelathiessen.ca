@@ -54,8 +54,8 @@ release-master:
     - sed -i "s|__JOEL_APP_LABEL__|$JOEL_APP_LABEL|" deployment.yml service.yml
     - sed -i "s|__KALY2_SERVICE_NAME__|$KALY2_SERVICE_NAME|" deployment.yml service.yml
     - |
-      SESSION_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1);
-      sed -i "s|__SES_SECRET__|$SESSION_SECRET|" deployment.yml
+      #SESSION_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1);
+      #sed -i "s|__SES_SECRET__|$SESSION_SECRET|" deployment.yml
 
     - kubectl apply -f service.yml
     - |
