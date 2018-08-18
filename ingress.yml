@@ -5,14 +5,14 @@ metadata:
   annotations: { "kubernetes.io/ingress.class": nginx }
 spec:
   rules:
-    - host: prod.joelathiessen.ca
+    - host: staging.joelathiessen.ca
       http:
         paths:
           - path: /
             backend:
               serviceName: joel-service-staging
               servicePort: 80
-    - host: staging.joelathiessen.ca
+    - host: prod.joelathiessen.ca
       http:
         paths:
           - path: /
