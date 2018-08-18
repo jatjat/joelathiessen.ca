@@ -60,9 +60,9 @@ release-master:
 
     - kubectl apply -f service.yml
     - |
-      if kubectl apply -f deployment.yaml | grep -q unchanged; then
+      if kubectl apply -f deployment.yml | grep -q unchanged; then
         echo "Forcing image update by patching deployment"
-        kubectl patch -f deployment.yaml -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"ci-last-updated\":\"$(date +'%s')\"}}}}}"
+        kubectl patch -f deployment.yml -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"ci-last-updated\":\"$(date +'%s')\"}}}}}"
       else
         echo "Applying deployment caused succesful image update"
       fi
