@@ -12,6 +12,7 @@ variables:
   DOCKER_HOST: "tcp://localhost:2375"
 
 before_script:
+  - apt-get install docker kubernetes -y || true
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
 
 build:
@@ -25,6 +26,7 @@ build:
 
 release-name:
   stage: release
+  image: docker:stable
   script:
     - docker pull $CI_REGISTRY_IMAGE:$CI_BUILD_REF
     - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
@@ -34,6 +36,7 @@ release-name:
 
 release-master:
   stage: release
+  image: docker:stable
   script:
     - docker pull $CI_REGISTRY_IMAGE:$CI_BUILD_REF
     - docker tag $CI_REGISTRY_IMAGE:$CI_BUILD_REF $CI_REGISTRY_IMAGE:latest
@@ -67,6 +70,7 @@ release-master:
 
 deploy-staging:
   stage: staging
+  image: wernight/kubectl
   variables:
     JOEL_DEPLOYMENT_NAME: "joel-deployment-staging"
     JOEL_CONTAINER_NAME: "joel-container-staging"
@@ -81,6 +85,7 @@ deploy-staging:
 
 deploy-production:
   stage: production
+  image: wernight/kubectl
   variables:
     JOEL_DEPLOYMENT_NAME: "joel-deployment-prod"
     JOEL_CONTAINER_NAME: "joel-container-prod"
