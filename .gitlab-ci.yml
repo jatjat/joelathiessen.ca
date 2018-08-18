@@ -57,6 +57,14 @@ release-master:
     - |
       #SESSION_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1);
       #sed -i "s|__SES_SECRET__|$SESSION_SECRET|" deployment.yml
+    - |
+      kubectl create secret -n $KUBE_NAMESPACE \
+        docker-registry gitlab-registry \
+        --docker-server="$CI_REGISTRY" \
+        --docker-username="$CI_REGISTRY_USER" \
+        --docker-password="$CI_REGISTRY_PASSWORD" \
+        --docker-email="$GITLAB_USER_EMAIL" \
+        -o yaml --dry-run | kubectl replace -n $KUBE_NAMESPACE --force -f -
 
     - kubectl apply -f service.yml
     - |
