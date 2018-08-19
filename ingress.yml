@@ -2,7 +2,12 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: joel-ingress
-  annotations: { "kubernetes.io/ingress.class": nginx }
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "route"
+    nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+    nginx.org/websocket-services: "joel-staging,joel-prod"
 spec:
   rules:
     - host: staging.joelathiessen.ca
@@ -10,12 +15,12 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: joel-service-staging
+              serviceName: joel-staging
               servicePort: 80
     - host: prod.joelathiessen.ca
       http:
         paths:
           - path: /
             backend:
-              serviceName: joel-service-prod
+              serviceName: joel-prod
               servicePort: 80
