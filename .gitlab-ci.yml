@@ -71,7 +71,7 @@ deploy-staging:
   stage: staging
   image: registry.joelathiessen.ca/kaly2/joelathiessen.ca/jbuild
   variables:
-    JOEL_SERVICE_NAME: "joel-service-staging"
+    JOEL_SERVICE_NAME: "joel-staging"
     JOEL_DEPLOYMENT_NAME: "joel-deployment-staging"
     JOEL_CONTAINER_NAME: "joel-container-staging"
     JOEL_APP_LABEL: "joel-frontend-staging"
@@ -87,7 +87,7 @@ deploy-production:
   stage: production
   image: registry.joelathiessen.ca/kaly2/joelathiessen.ca/jbuild
   variables:
-    JOEL_SERVICE_NAME: "joel-service-prod"
+    JOEL_SERVICE_NAME: "joel-prod"
     JOEL_DEPLOYMENT_NAME: "joel-deployment-prod"
     JOEL_CONTAINER_NAME: "joel-container-prod"
     JOEL_APP_LABEL: "joel-frontend-prod"
