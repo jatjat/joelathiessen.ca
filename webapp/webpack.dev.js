@@ -13,9 +13,6 @@ module.exports = merge(common, {
       "/img": {
         target: "http://localhost:3000"
       },
-      "/css": {
-        target: "http://localhost:3000"
-      },
       "/public": {
         target: "http://localhost:3000"
       },

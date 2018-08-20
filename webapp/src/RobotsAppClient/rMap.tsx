@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Leaflet from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 type Props = {
   mapDataHandler: Function;

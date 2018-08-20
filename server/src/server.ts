@@ -39,7 +39,6 @@ function run() {
 
   console.log(__dirname);
   app.use("/img", express.static(path.join(__dirname, "../img/")));
-  app.use("/css", express.static(path.join(__dirname, "../css/")));
   app.use("/public", express.static(path.join(__dirname, "../public/")));
   app.use("/", express.static(path.join(__dirname, "../dist/")));
 
