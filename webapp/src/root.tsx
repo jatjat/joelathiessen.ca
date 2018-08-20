@@ -1,16 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {
-  HashRouter as Router,
-  Route,
-  Switch,
-  Redirect
-} from "react-router-dom";
+import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import { About } from "./about";
 import { Resume } from "./resume";
 import { Robots } from "./robots";
 import { MainGrid } from "./mainGrid";
 import { App } from "./app";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 class Root extends React.Component {
   render() {

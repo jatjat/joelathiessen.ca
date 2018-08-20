@@ -261,7 +261,7 @@ export class CtrlForm extends React.Component<Props, State> {
           <FormControl.Feedback />
           {sensorAngVarHelpBlock}
         </FormGroup>
-        <ButtonToolbar justified>
+        <ButtonToolbar>
           <ButtonGroup>
             <Button bsStyle="info" onClick={this.props.openHelpModal}>
               <Glyphicon glyph="question-sign" /> What do these settings do?

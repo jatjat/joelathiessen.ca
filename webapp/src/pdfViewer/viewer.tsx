@@ -1,5 +1,6 @@
 import React from "react";
-import { Page, PDF } from "./reactPDF.js";
+import { Page, PDF } from "./reactPDF";
+import "../../../css/pdfViewer.css";
 
 export class Viewer extends React.Component {
   static contextTypes = PDF.childContextTypes;

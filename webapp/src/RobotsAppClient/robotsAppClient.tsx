@@ -14,6 +14,7 @@ import IO from "socket.io-client";
 import { CtrlForm } from "./ctrlForm";
 import { RMap } from "./rMap";
 import { StartButton } from "./startButton";
+import "../../css/robotApp.css";
 
 type Props = { namespace: string };
 type State = {

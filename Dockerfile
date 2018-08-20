@@ -1,5 +1,5 @@
 FROM node:9-alpine as base
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash curl
 
 # Create small node_modules for Node server
 FROM base as server-prod-deps
@@ -39,6 +39,5 @@ COPY server/package.json .
 COPY --from=server-prod-deps /app/server/node_modules ./node_modules
 COPY --from=server /app/server/dist ./dist
 COPY --from=webapp /app/webapp/dist ./dist
-RUN apk add --no-cache wget
 EXPOSE 3000
 CMD [ "yarn", "start" ]
