@@ -131,20 +131,6 @@ export class RMap extends React.Component<Props, State> {
       this.map.removeLayer(this.particles);
     }
 
-    if (this.refreshStaticMapLayersRequested) {
-      jsonData.trueLandmarks.map(pnt => {
-        this.landmarks.addLayer(
-          Leaflet.circleMarker([pnt.x, pnt.y], {
-            radius: 5,
-            fillColor: "green",
-            fillOpacity: 1,
-            stroke: false
-          })
-        );
-      });
-      this.refreshStaticMapLayersRequested = false;
-    }
-
     const particleLayersList = jsonData.particles
       .slice(0, Math.min(jsonData.particles.length, 10))
       .map(pnt => {
