@@ -26,13 +26,13 @@ RUN yarn --pure-lockfile
 COPY webapp/webpack.common.js .
 COPY webapp/webpack.prod.js .
 COPY webapp/tsconfig.json .
+COPY webapp/css ./css
 COPY webapp/src ./src
 RUN yarn build
 
 # Combine node_modules and bundles
 FROM base as release
 WORKDIR /app/server
-COPY server/css ./css
 COPY server/img ./img
 COPY server/public ./public
 COPY server/package.json .
