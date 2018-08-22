@@ -160,7 +160,6 @@ function validatedClientMessage(
   var validData: ValidClientData;
 
   // Modify incoming data so that something valid is always sent
-  // TODO: Validate using JSON schemas instead?
   if (data.msgType == "slamSettings") {
     validData = {
       msgType: "slamSettings",
@@ -181,9 +180,18 @@ function validatedClientMessage(
       msgType: "robotSessionSettings",
       msg: {
         shouldRun: data.msg.shouldRun == true,
-        shouldReset: data.msg.shouldReset == true
+        shouldReset: data.msg.shouldReset == true,
+        sessionID: Math.max(0, data.msg.sessionID)
       }
     };
+  } else if (data.msgType == "robotSessionSubscribe") {
+    validData = {
+      msgType: "robotSessionSubscribe",
+      msg: {
+        sessionID: Math.max(0, data.msg.sessionID)
+      }
+    };
+
     if (data.msg.sessionID) {
       validData.sessionID = Math.max(0, data.msg.sessionID);
     }
