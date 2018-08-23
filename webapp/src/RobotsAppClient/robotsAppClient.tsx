@@ -65,6 +65,14 @@ export class RobotsApp extends React.Component<Props, State> {
             isRunning: jsonData.msg.isRunning,
             resetting: jsonData.msg.hasJustReset
           });
+        } else if (jsonData.msgType == "connectionOpen") {
+          const subscribeMsg = {
+            msgType: "robotSessionSubscribe",
+            msg: {
+              sessionID: this.state.sessionID // starts as null to request new session on first connection
+            }
+          };
+          this.io.emit("message", subscribeMsg);
         } else if (
           jsonData.msgType == "robotSessionSubscribe" &&
           jsonData.msg.success
@@ -90,14 +98,6 @@ export class RobotsApp extends React.Component<Props, State> {
         connected: "connected"
       });
       console.log("connected");
-
-      const subscribeMsg = {
-        msgType: "robotSessionSubscribe",
-        msg: {
-          // get a new session by not supplying a session ID
-        }
-      };
-      this.io.emit("message", subscribeMsg);
     });
 
     this.io.on("disconnect", data => {
@@ -145,6 +145,7 @@ export class RobotsApp extends React.Component<Props, State> {
       const startMsg = {
         msgType: "robotSessionSettings",
         msg: {
+          sessionID: this.state.sessionID,
           shouldRun: !this.state.isRunning,
           shouldReset: false
         }
@@ -158,6 +159,7 @@ export class RobotsApp extends React.Component<Props, State> {
       const resetMsg = {
         msgType: "robotSessionSettings",
         msg: {
+          sessionID: this.state.sessionID,
           shouldRun: this.state.isRunning,
           shouldReset: true
         }
