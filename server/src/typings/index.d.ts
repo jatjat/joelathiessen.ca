@@ -7,3 +7,9 @@ declare module "socket.io-express-session" {
 
   export = socketIoSession;
 }
+
+type ValidClientData = {
+  msgType: String;
+  sessionID?: number;
+  msg: {};
+};
