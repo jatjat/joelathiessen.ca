@@ -58,6 +58,20 @@ type PageState = {
   height: number;
 };
 
+type CanvasContext = {
+  scale(x: number, y: number);
+};
+
+interface Canvas extends React.Component {
+  width: number;
+  height: number;
+  getContext(type: string): CanvasContext;
+  style: {
+    width: string;
+    height: string;
+  };
+}
+
 export class Page extends React.Component<PageProps, PageState> {
   static contextTypes = PDF.childContextTypes;
   constructor(props) {
@@ -100,13 +114,23 @@ export class Page extends React.Component<PageProps, PageState> {
     });
   }
   _renderPage(page) {
-    let { scale } = this.context;
-    let viewport = page.getViewport(scale);
-    let { width, height } = viewport;
-    let canvas = this.refs.canvas as any;
-    let context = canvas.getContext("2d");
-    canvas.width = width;
-    canvas.height = height;
+    const { scale } = this.context;
+    const viewport = page.getViewport(scale);
+    const { width, height } = viewport;
+    const canvas = this.refs.canvas as Canvas;
+    const context = canvas.getContext("2d");
+
+    if (window.devicePixelRatio > 1) {
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+
+      context.scale(window.devicePixelRatio, window.devicePixelRatio);
+    } else {
+      canvas.width = width;
+      canvas.height = height;
+    }
 
     page.render({
       canvasContext: context,
@@ -121,7 +145,7 @@ export class Page extends React.Component<PageProps, PageState> {
     });
   }
   render() {
-    let { width, height, status } = this.state;
+    let { width, height } = this.state;
     return (
       <div className={`pdf-page {status}`} style={{ width, height }}>
         <canvas ref="canvas" />
@@ -133,10 +157,10 @@ export class Page extends React.Component<PageProps, PageState> {
 export class Viewer extends React.Component {
   static contextTypes = PDF.childContextTypes;
   render() {
-    let { pdf } = this.context;
-    let numPages = pdf ? pdf.pdfInfo.numPages : 0;
-    let fingerprint = pdf ? pdf.pdfInfo.fingerprint : "none";
-    let pages = Array.apply(null, {
+    const { pdf } = this.context;
+    const numPages = pdf ? pdf.pdfInfo.numPages : 0;
+    const fingerprint = pdf ? pdf.pdfInfo.fingerprint : "none";
+    const pages = Array.apply(null, {
       length: numPages
     }).map((v, i) => <Page index={i + 1} key={`${fingerprint}-${i}`} />);
 
