@@ -4,7 +4,8 @@ const common = require("./webpack.common.js");
 module.exports = merge(common, {
   output: {
     path: path.join(__dirname, "../server/dist/"),
-    filename: "[name].bundle.js"
+    filename: "[name].bundle.js",
+    globalObject: "this"
   },
   devServer: {
     contentBase: "../server/public",
