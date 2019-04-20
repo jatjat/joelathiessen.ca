@@ -4,6 +4,7 @@
 import React from "react";
 import PDFJS from "pdfjs-dist/webpack";
 import PropTypes from "prop-types";
+import "../../css/pdfViewer.css";
 
 type PDFProps = {
   src: string;
@@ -65,7 +66,7 @@ type CanvasContext = {
 interface Canvas extends React.Component {
   width: number;
   height: number;
-  getContext(type: string): CanvasContext;
+  getContext(contextType: string): CanvasContext;
   style: {
     width: string;
     height: string;
