@@ -91,29 +91,29 @@ export class Page extends React.Component<PageProps, PageState> {
   }
   componentDidUpdate(nextProps, nextState, nextContext) {
     if (nextContext) {
-      this._update(nextContext.pdf);
+      this.update(nextContext.pdf);
     }
   }
   componentDidMount() {
-    this._update(this.context.pdf);
+    this.update(this.context.pdf);
   }
-  _update(pdf) {
+  update(pdf) {
     if (pdf) {
-      this._loadPage(pdf);
+      this.loadPage(pdf);
     } else {
       this.setState({
         status: "loading"
       });
     }
   }
-  _loadPage(pdf) {
+  loadPage(pdf) {
     if (this.state.status === "rendering" || this.state.page != null) return;
-    pdf.getPage(this.props.index).then(this._renderPage.bind(this));
+    pdf.getPage(this.props.index).then(this.renderPage.bind(this));
     this.setState({
       status: "rendering"
     });
   }
-  _renderPage(page) {
+  renderPage(page) {
     const { scale } = this.context;
     const viewport = page.getViewport(scale);
     const { width, height } = viewport;
