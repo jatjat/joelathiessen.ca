@@ -45,37 +45,19 @@ release-master:
 
 .common-deploy-script: &common-deploy-script
   script:
-    # Rollback enabled:
-    - echo "$CI_REGISTRY_IMAGE"
-    - echo "$CI_BUILD_REF"
-    - sed -i "s|__IMAGE_NAME__|$CI_REGISTRY_IMAGE:$CI_BUILD_REF|" deployment.yml
-    - sed -i "s|__JOEL_DEPLOYMENT_NAME__|$JOEL_DEPLOYMENT_NAME|" deployment.yml
-    - sed -i "s|__JOEL_CONTAINER_NAME__|$JOEL_CONTAINER_NAME|" deployment.yml
-    - sed -i "s|__JOEL_APP_LABEL__|$JOEL_APP_LABEL|" deployment.yml service.yml
-    - sed -i "s|__KALY2_SERVICE_NAME__|$KALY2_SERVICE_NAME|" deployment.yml service.yml
-    - sed -i "s|__JOEL_SERVICE_NAME__|$JOEL_SERVICE_NAME|" service.yml
     - |
-      #SESSION_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1);
-      #sed -i "s|__SES_SECRET__|$SESSION_SECRET|" deployment.yml
-    - kubectl apply -f service.yml
-    - kubectl apply -f ingress.yml
-    - |
-      if kubectl apply -f deployment.yml | grep -q unchanged; then
-        echo "Forcing image update by patching deployment"
-        kubectl patch -f deployment.yml -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"ci-last-updated\":\"$(date +'%s')\"}}}}}"
-      else
-        echo "Applying deployment caused succesful image update"
-      fi
+      helm upgrade helm-chart/joelathiessen.ca
+      --install 
+      --force 
+      --set nameOverride=${NAME}
+      --namespace=${NAMESPACE}
 
 deploy-staging:
   stage: staging
   image: registry.joelathiessen.ca/kaly2/joelathiessen.ca/jbuild
   variables:
-    JOEL_SERVICE_NAME: "joel-staging"
-    JOEL_DEPLOYMENT_NAME: "joel-deployment-staging"
-    JOEL_CONTAINER_NAME: "joel-container-staging"
-    JOEL_APP_LABEL: "joel-frontend-staging"
-    KALY2_SERVICE_NAME: "kaly2-staging.kaly2.svc.cluster.local"
+    NAME: "joelathiessen-ca"
+    NAMESPACE: "staging"
   <<: *common-deploy-script
   environment:
     name: staging
@@ -87,11 +69,8 @@ deploy-production:
   stage: production
   image: registry.joelathiessen.ca/kaly2/joelathiessen.ca/jbuild
   variables:
-    JOEL_SERVICE_NAME: "joel-prod"
-    JOEL_DEPLOYMENT_NAME: "joel-deployment-prod"
-    JOEL_CONTAINER_NAME: "joel-container-prod"
-    JOEL_APP_LABEL: "joel-frontend-prod"
-    KALY2_SERVICE_NAME: "kaly2-prod.kaly2.svc.cluster.local"
+    NAME: "joelathiessen-ca"
+    NAMESPACE: "prod"
   <<: *common-deploy-script
   environment:
     name: production
