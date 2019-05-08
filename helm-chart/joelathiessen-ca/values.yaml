@@ -9,7 +9,7 @@ replicaCount: 1
 
 image:
   repository: registry.joelathiessen.ca/kaly2/joelathiessen.ca
-  tag: dev
+  tag: stable
   pullPolicy: IfNotPresent
 
 imageCredentials:
