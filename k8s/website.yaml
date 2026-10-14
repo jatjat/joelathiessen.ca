@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: website
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: website
+  template:
+    metadata:
+      labels:
+        app: website
+    spec:
+      containers:
+        - name: website
+          image: website:local
+          env:
+            - name: WS_ADDR
+              value: ws://kaly2:9000/api/ws/robot
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: website
+spec:
+  selector:
+    app: website
+  ports:
+    - port: 3000
