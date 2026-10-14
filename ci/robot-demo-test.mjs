@@ -1,0 +1,25 @@
+// End-to-end test: talk to the website like a browser would (socket.io v2 over a
+// raw WebSocket), start a robot session, and pass once kaly2's SLAM data arrives.
+const base = process.argv[2] || "ws://localhost:3000";
+const ws = new WebSocket(`${base}/socket.io/?EIO=3&transport=websocket`);
+const start = { msgType: "robotSessionSettings", msg: { shouldRun: true, shouldReset: false } };
+const sendStart = () => ws.send("42" + JSON.stringify(["message", start]));
+
+const fail = setTimeout(() => { console.log("FAIL: no slamInfo within 60s"); process.exit(1); }, 60000);
+const seen = new Set();
+
+ws.onmessage = (e) => {
+  const d = String(e.data);
+  if (d.startsWith("0")) setInterval(() => ws.send("2"), 20000); // engine.io ping
+  if (d === "40") { sendStart(); setInterval(sendStart, 2000); } // server drops messages until kaly2 is connected
+  if (!d.startsWith("42")) return;
+  const msg = JSON.parse(JSON.parse(d.slice(2))[1]);
+  if (!seen.has(msg.msgType)) { seen.add(msg.msgType); console.log("received", msg.msgType); }
+  if (msg.msgType === "slamInfo") {
+    console.log("PASS: slamInfo arrived,", JSON.stringify(msg).length, "bytes");
+    clearTimeout(fail);
+    process.exit(0);
+  }
+};
+ws.onerror = (e) => console.log("websocket error:", e.message);
+ws.onclose = () => console.log("websocket closed");
