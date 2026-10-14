@@ -47,7 +47,9 @@ export class RobotsApp extends React.Component<Props, State> {
     this.onCtrlMsg = this.onCtrlMsg.bind(this);
 
     this.io = IO(this.props.namespace, {
-      reconnect: true
+      reconnect: true,
+      // Relative to the page, so it also works under a path prefix
+      path: location.pathname.replace(/[^/]*$/, "") + "socket.io"
     });
     this.io.on("message", (data, flags) => {
       var jsonData = JSON.parse(data);

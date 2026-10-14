@@ -12,7 +12,8 @@ type State = {};
 
 export class Resume extends React.Component<Props, State> {
   static defaultProps = {
-    resSrc: rotl33tStr("/choyvp/erf.cqs")
+    // Resolve against the page so it also works under a path prefix
+    resSrc: new URL(rotl33tStr("choyvp/erf.cqs"), document.baseURI).href
   };
 
   render() {

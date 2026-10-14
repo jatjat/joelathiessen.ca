@@ -1,7 +1,11 @@
 // End-to-end test: talk to the website like a browser would (socket.io v2 over a
 // raw WebSocket), start a robot session, and pass once kaly2's SLAM data arrives.
+// The base can include a path prefix, e.g. wss://example.com/share/website/my-branch
 const base = process.argv[2] || "ws://localhost:3000";
-const ws = new WebSocket(`${base}/socket.io/?EIO=3&transport=websocket`);
+const headers = {};
+if (process.env.SITE_KEY) headers["x-site-key"] = process.env.SITE_KEY;
+if (process.env.COOKIE) headers["cookie"] = process.env.COOKIE;
+const ws = new WebSocket(`${base}/socket.io/?EIO=3&transport=websocket`, { headers });
 const start = { msgType: "robotSessionSettings", msg: { shouldRun: true, shouldReset: false } };
 const sendStart = () => ws.send("42" + JSON.stringify(["message", start]));
 

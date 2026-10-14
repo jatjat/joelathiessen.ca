@@ -20,9 +20,9 @@ spec:
               value: ws://kaly2:9000/api/ws/robot
           ports:
             - containerPort: 3000
+          # A port check, since pages need the site key when SITE_KEY is set
           readinessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 3000
 ---
 apiVersion: v1

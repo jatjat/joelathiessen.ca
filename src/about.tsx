@@ -10,7 +10,7 @@ export class About extends React.Component {
             <Panel>
               <Col xs={4} md={4}>
                 <Image
-                  src="/img/JoelThiessenPhotoSmall.jpeg"
+                  src="img/JoelThiessenPhotoSmall.jpeg"
                   rounded
                   responsive
                 />

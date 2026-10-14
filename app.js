@@ -21,7 +21,10 @@ var socketIoSession = require('socket.io-express-session');
 var WebSocket = require('ws');
 var IO = require('socket.io')
 
-var cdn = (process.env.NODE_ENV === 'production' ? '/' : LOCALHOST_ADDR);
+// Relative in production, so the site also works under a path like /share/website/<branch>/
+var cdn = (process.env.NODE_ENV === 'production' ? '' : LOCALHOST_ADDR);
+// When set, only requests carrying this key (added by the Cloudflare Worker) get through
+var SITE_KEY = process.env.SITE_KEY;
 swig.setDefaults({
   locals: {
     cdn: cdn
@@ -36,6 +39,12 @@ app.use(compression({
 
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
+
+if (SITE_KEY) {
+  app.use((req, res, next) => {
+    req.get('x-site-key') === SITE_KEY ? next() : res.sendStatus(404);
+  });
+}
 
 app.use('/img', express.static(path.join(__dirname, 'img')));
 app.use('/css', express.static(path.join(__dirname, 'css')));
@@ -52,7 +61,11 @@ var server = app.listen(process.env.PORT || 3000, () => {
   console.log('Express server listening on port ' + server.address().port);
 });
 
-var io = IO(server);
+var io = IO(server, {
+  allowRequest: (req, callback) => {
+    callback(null, !SITE_KEY || req.headers['x-site-key'] === SITE_KEY);
+  }
+});
 io.use(socketIoSession(session));
 io.on('connection', (socket) => {
   var ses = socket.handshake.session;
