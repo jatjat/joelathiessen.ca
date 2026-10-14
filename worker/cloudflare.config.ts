@@ -7,8 +7,10 @@ export default defineConfig({
     entrypoint,
     compatibilityDate: "2026-09-30",
     workersDev: false,
-    // Test name; joelathiessen.ca and www are added when switching over
-    triggers: [triggers.fetch({ pattern: "worker-test.joelathiessen.ca/*", zone: "joelathiessen.ca" })],
+    triggers: [
+      triggers.fetch({ pattern: "joelathiessen.ca/*", zone: "joelathiessen.ca" }),
+      triggers.fetch({ pattern: "www.joelathiessen.ca/*", zone: "joelathiessen.ca" }),
+    ],
     previewUrls: false,
     // No logs, so share keys in links never get stored
     observability: { enabled: false },
