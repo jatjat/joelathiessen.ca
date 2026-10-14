@@ -55,6 +55,19 @@ export class RobotsApp extends React.Component<Props, State> {
       var jsonData = JSON.parse(data);
       this.history += jsonData;
 
+      // kaly2 sends this once the server's connection to it is open, so the
+      // robot is only started when the message can reach kaly2
+      if (jsonData.msgType == "connectionOpen") {
+        var startMsg = {
+          msgType: "robotSessionSettings",
+          msg: {
+            shouldRun: true,
+            shouldReset: false
+          }
+        };
+        this.io.emit("message", startMsg);
+      }
+
       if (this.handleMapData != null) {
         if (jsonData.msgType == "slamInfo" && this.state.resetting == false) {
           this.handleMapData(jsonData.msg);
@@ -72,15 +85,6 @@ export class RobotsApp extends React.Component<Props, State> {
         connected: "connected"
       });
       console.log("connected");
-
-      var startMsg = {
-        msgType: "robotSessionSettings",
-        msg: {
-          shouldRun: true,
-          shouldReset: false
-        }
-      };
-      this.io.emit("message", startMsg);
     });
 
     this.io.on("disconnect", data => {
