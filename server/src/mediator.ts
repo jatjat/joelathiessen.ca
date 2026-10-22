@@ -22,7 +22,10 @@ function mediateClientSocketWithKaly2(
   }
 
   function getKaly2ServiceAddr(serviceDNSName?: string): string {
-    const serviceAddr = !!serviceDNSName
+    // A full address, e.g. kaly2's Cloud Run URL, takes precedence
+    const serviceAddr = process.env.WS_ADDR
+      ? process.env.WS_ADDR
+      : !!serviceDNSName
       ? KALY2_SERVICE_WS_ADDR(serviceDNSName)
       : DEFAULT_WS_ADDR;
     console.log("Using kaly2 server address: ", serviceAddr);

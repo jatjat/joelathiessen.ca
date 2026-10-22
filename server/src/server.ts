@@ -9,6 +9,8 @@ import IO from "socket.io";
 import mediateClientSocketWithKaly2 from "./mediator";
 
 const DEFAULT_PORT = 3000;
+// When set, only requests carrying this key (added by the Cloudflare Worker) get through
+const SITE_KEY = process.env.SITE_KEY;
 
 run();
 
@@ -32,6 +34,12 @@ function run() {
     })
   );
 
+  if (SITE_KEY) {
+    app.use((req, res, next) => {
+      req.get("x-site-key") === SITE_KEY ? next() : res.sendStatus(404);
+    });
+  }
+
   console.log(__dirname);
   app.use("/img", express.static(path.join(__dirname, "../img/")));
   app.use("/public", express.static(path.join(__dirname, "../public/")));
@@ -41,7 +49,11 @@ function run() {
     console.log("Express server listening on port " + server.address().port);
   });
 
-  const io = IO(server);
+  const io = IO(server, {
+    allowRequest: (req, callback) => {
+      callback(null, !SITE_KEY || req.headers["x-site-key"] === SITE_KEY);
+    }
+  });
   io.use(socketIoSession(session));
   io.on("connection", onClientConnection);
 }
