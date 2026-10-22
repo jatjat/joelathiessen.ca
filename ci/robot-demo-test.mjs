@@ -20,6 +20,7 @@ setTimeout(() => {
 
 let sessionID = null;
 let slamInfos = 0;
+let truePose = null;
 let oldWayTimer = null;
 
 ws.onmessage = async (e) => {
@@ -49,13 +50,16 @@ ws.onmessage = async (e) => {
     sessionID = msg.msg.sessionID;
     // Like the page, whose first start still has no session ID (it reads it before setState applies)
     send({ msgType: "robotSessionSettings", msg: { shouldRun: true, shouldReset: false } });
-  } else if (msg.msgType === "slamInfo" && ++slamInfos === 1) {
+  } else if (msg.msgType === "slamInfo" && (truePose = msg.msg.truePose) && ++slamInfos === 1) {
     check(true, "the robot starts and its SLAM data arrives");
     const firstAt = Date.now();
+    const start = truePose;
     setTimeout(() => {
-      // The demo should move smoothly, not crawl at a step every few seconds
+      // The demo should move smoothly, not crawl at a step every few seconds or stand still
       const perSecond = (slamInfos - 1) / ((Date.now() - firstAt) / 1000);
       check(perSecond >= 2, `the robot takes at least 2 steps a second (${perSecond.toFixed(1)} a second)`);
+      const moved = Math.hypot(truePose.x - start.x, truePose.y - start.y);
+      check(moved >= 10, `the robot travels at least 10 units in 5 s (${moved.toFixed(1)})`);
     }, 5000);
     // What the page sends when Apply is pressed with the form's defaults, after measuring speed
     await new Promise((r) => setTimeout(r, 5100));
