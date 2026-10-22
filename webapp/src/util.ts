@@ -10,6 +10,6 @@ export function rotl33tStr(string: string) {
 export function robotSessionSettingsState(msg: any) {
   return {
     isRunning: msg.isRunning,
-    resetting: msg.hasJustReset
+    resetting: msg.hasJustReset === true
   };
 }
