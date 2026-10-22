@@ -55,10 +55,11 @@ export class RMap extends React.Component<Props, State> {
   }
 
   initialize() {
-    // The simulated robot's room, so everywhere it can drive is in view from the start
-    // (x up the map, y across it). The old view showed mostly empty space past the room.
+    // The circle the simulated robot drives laps of, with room for its odometry to drift
+    // (x up the map, y across it)
     // const startBounds = [[90, 150], [230, 470]];
-    const startBounds = [[50, 55], [360, 320]];
+    // const startBounds = [[50, 55], [360, 320]];
+    const startBounds = [[58, 68], [298, 308]];
 
     this.oldOdoX = null;
     this.oldOdoY = null;
