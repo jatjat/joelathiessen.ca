@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node dist/backend.bundle.js",
     "build": "webpack --mode production --config webpack.prod.js",
+    "test": "tsc --module commonjs --target es2015 --outDir test-build __tests__/util.test.ts && node test-build/__tests__/util.test.js",
     "watch": "webpack-dev-server -w --mode development --inline --hot --port 8080 --progress --colors --config webpack.dev.js --host 0.0.0.0"
   },
   "author": "Joel Thiessen",

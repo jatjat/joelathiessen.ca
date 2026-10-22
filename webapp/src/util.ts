@@ -5,3 +5,11 @@ export function rotl33tStr(string: string) {
     );
   });
 }
+
+// The page's state after kaly2 replies to a start, pause or reset request
+export function robotSessionSettingsState(msg: any) {
+  return {
+    isRunning: msg.isRunning,
+    resetting: msg.hasJustReset
+  };
+}

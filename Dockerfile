@@ -28,6 +28,8 @@ COPY webapp/webpack.prod.js .
 COPY webapp/tsconfig.json .
 COPY webapp/css ./css
 COPY webapp/src ./src
+COPY webapp/__tests__ ./__tests__
+RUN yarn test
 RUN yarn build
 
 # Combine node_modules and bundles

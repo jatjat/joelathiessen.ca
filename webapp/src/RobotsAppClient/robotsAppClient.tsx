@@ -14,6 +14,7 @@ import IO from "socket.io-client";
 import { CtrlForm } from "./ctrlForm";
 import { RMap } from "./rMap";
 import { StartButton } from "./startButton";
+import { robotSessionSettingsState } from "../util";
 import "../../css/robotApp.css";
 
 type Props = { namespace: string };
@@ -61,10 +62,7 @@ export class RobotsApp extends React.Component<Props, State> {
         if (jsonData.msgType == "slamInfo" && this.state.resetting == false) {
           this.handleMapData(jsonData.msg);
         } else if (jsonData.msgType == "robotSessionSettings") {
-          this.setState({
-            isRunning: jsonData.msg.isRunning,
-            resetting: jsonData.msg.hasJustReset
-          });
+          this.setState(robotSessionSettingsState(jsonData.msg));
         } else if (jsonData.msgType == "connectionOpen") {
           const subscribeMsg = {
             msgType: "robotSessionSubscribe",
