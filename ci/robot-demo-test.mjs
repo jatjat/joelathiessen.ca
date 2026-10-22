@@ -22,7 +22,7 @@ let sessionID = null;
 let slamInfos = 0;
 let oldWayTimer = null;
 
-ws.onmessage = (e) => {
+ws.onmessage = async (e) => {
   const d = String(e.data);
   if (d.startsWith("0")) setInterval(() => ws.send("2"), 20000); // engine.io ping
   if (d === "40") {
@@ -51,11 +51,18 @@ ws.onmessage = (e) => {
     send({ msgType: "robotSessionSettings", msg: { shouldRun: true, shouldReset: false } });
   } else if (msg.msgType === "slamInfo" && ++slamInfos === 1) {
     check(true, "the robot starts and its SLAM data arrives");
-    // What the page sends when Apply is pressed with the form's defaults
+    const firstAt = Date.now();
+    setTimeout(() => {
+      // The demo should move smoothly, not crawl at a step every few seconds
+      const perSecond = (slamInfos - 1) / ((Date.now() - firstAt) / 1000);
+      check(perSecond >= 2, `the robot takes at least 2 steps a second (${perSecond.toFixed(1)} a second)`);
+    }, 5000);
+    // What the page sends when Apply is pressed with the form's defaults, after measuring speed
+    await new Promise((r) => setTimeout(r, 5100));
     const settings = { numParticles: 20, sensorDistVar: 0.5, sensorAngVar: 0.01 };
     if (sessionID !== null) settings.sessionID = sessionID;
     send({ msgType: "slamSettings", msg: settings });
-    // The 2018-19 simulation takes a few seconds per step, so allow up to 20 s for the next one
+    // Allow up to 20 s for the next step
     const before = slamInfos;
     const appliedAt = Date.now();
     const waitForNext = setInterval(() => {
