@@ -1,30 +1,45 @@
-# Build the web app bundles
-FROM node:9.11.2-alpine AS build
-WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn --pure-lockfile
-COPY tsconfig.json ./
-COPY webpack ./webpack
-COPY src ./src
-RUN yarn build
+FROM node:9-alpine as base
+RUN apk add --no-cache bash curl
 
-# Install only the packages the server needs
-FROM node:9.11.2-alpine AS deps
-WORKDIR /app
-COPY package.json yarn.lock ./
+# Create small node_modules for Node server
+FROM base as server-prod-deps
+WORKDIR /app/server
+COPY server/package.json .
+COPY server/yarn.lock .
 RUN yarn --production --pure-lockfile
 
-FROM node:9.11.2-alpine
-WORKDIR /app
-ENV NODE_ENV=production PORT=3000
-COPY --from=deps /app/node_modules ./node_modules
-COPY package.json app.js ./
-COPY css ./css
-COPY img ./img
-COPY src/index.html ./src/index.html
-COPY --from=build /app/dist ./dist
-# Files served from /public (like the resume) aren't in git; the build
-# copies them into public/ before running docker build
-COPY public ./public
+# Create Node server bundles
+FROM server-prod-deps as server
+WORKDIR /app/server
+RUN yarn --pure-lockfile
+COPY server/webpack.server.js .
+COPY server/tsconfig.json .
+COPY server/src ./src
+RUN yarn build
+
+# Create React web app bundles
+FROM base as webapp
+WORKDIR /app/webapp
+COPY webapp/package.json .
+COPY webapp/yarn.lock .
+RUN yarn --pure-lockfile
+COPY webapp/webpack.common.js .
+COPY webapp/webpack.prod.js .
+COPY webapp/tsconfig.json .
+COPY webapp/css ./css
+COPY webapp/src ./src
+COPY webapp/__tests__ ./__tests__
+RUN yarn test
+RUN yarn build
+
+# Combine node_modules and bundles
+FROM base as release
+WORKDIR /app/server
+COPY server/img ./img
+COPY server/public ./public
+COPY server/package.json .
+COPY --from=server-prod-deps /app/server/node_modules ./node_modules
+COPY --from=server /app/server/dist ./dist
+COPY --from=webapp /app/webapp/dist ./dist
 EXPOSE 3000
-CMD ["node", "app.js"]
+CMD [ "yarn", "start" ]

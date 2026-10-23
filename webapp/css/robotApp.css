@@ -1,0 +1,9 @@
+.leaflet-container {
+  height: 50vh;
+}
+
+@media (min-width: 34em) {
+  .leaflet-container {
+    height: 80vh;
+  }
+}

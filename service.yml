@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: __JOEL_SERVICE_NAME__
+spec:
+  selector:
+    app: __JOEL_APP_LABEL__
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

@@ -1,7 +1,9 @@
 node_modules/*
-npm-debug.log
 public/*
 dist/*
-!public/.keep
+.vscode
+.idea
+yarn-error.log
+npm-debug.log
 worker/node_modules/
 .cloudflare/
