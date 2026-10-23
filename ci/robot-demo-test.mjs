@@ -14,9 +14,9 @@ const check = (ok, what) => {
   if (!ok) failed = true;
 };
 setTimeout(() => {
-  check(false, "the test finished within 60 s");
+  check(false, "the test finished within 90 s");
   process.exit(1);
-}, 60000);
+}, 90000);
 
 let sessionID = null;
 let slamInfos = 0;
@@ -55,14 +55,17 @@ ws.onmessage = async (e) => {
     const firstAt = Date.now();
     const start = truePose;
     setTimeout(() => {
-      // The demo should move smoothly, faster than the old demo's 30 steps a second
-      const perSecond = (slamInfos - 1) / ((Date.now() - firstAt) / 1000);
-      check(perSecond > 30, `the robot takes more than 30 steps a second (${perSecond.toFixed(1)} a second)`);
       const moved = Math.hypot(truePose.x - start.x, truePose.y - start.y);
       check(moved >= 10, `the robot travels at least 10 units in 5 s (${moved.toFixed(1)})`);
     }, 5000);
+    // The demo should move smoothly, faster than the old demo's 30 steps a second. Measure
+    // for 20 s, since Cloud Run gives a new instance extra CPU for only its first few seconds
+    setTimeout(() => {
+      const perSecond = (slamInfos - 1) / ((Date.now() - firstAt) / 1000);
+      check(perSecond > 30, `the robot takes more than 30 steps a second for 20 s (${perSecond.toFixed(1)} a second)`);
+    }, 20000);
     // What the page sends when Apply is pressed with the form's defaults, after measuring speed
-    await new Promise((r) => setTimeout(r, 5100));
+    await new Promise((r) => setTimeout(r, 20100));
     const settings = { numParticles: 20, sensorDistVar: 0.5, sensorAngVar: 0.01 };
     if (sessionID !== null) settings.sessionID = sessionID;
     send({ msgType: "slamSettings", msg: settings });
