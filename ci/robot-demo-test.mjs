@@ -55,9 +55,9 @@ ws.onmessage = async (e) => {
     const firstAt = Date.now();
     const start = truePose;
     setTimeout(() => {
-      // The demo should move smoothly, not crawl at a step every few seconds or stand still
+      // The demo should move smoothly, faster than the old demo's 30 steps a second
       const perSecond = (slamInfos - 1) / ((Date.now() - firstAt) / 1000);
-      check(perSecond >= 15, `the robot takes at least 15 steps a second (${perSecond.toFixed(1)} a second)`);
+      check(perSecond > 30, `the robot takes more than 30 steps a second (${perSecond.toFixed(1)} a second)`);
       const moved = Math.hypot(truePose.x - start.x, truePose.y - start.y);
       check(moved >= 10, `the robot travels at least 10 units in 5 s (${moved.toFixed(1)})`);
     }, 5000);
